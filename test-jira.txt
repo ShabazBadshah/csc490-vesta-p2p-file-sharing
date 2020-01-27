@@ -1,0 +1,1 @@
+This file is testing Jira integration with GitHub
