@@ -1,0 +1,14 @@
+{
+  "name": "vesta-backend",
+  "version": "1.0.0",
+  "description": "The Vesta file sharing app backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Vesta"
+  ],
+  "author": "",
+  "license": "ISC"
+}
