@@ -3,28 +3,17 @@ package com.vesta.android;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.view.WindowManager;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        final Button button = (Button)findViewById(R.id.button);
-        final TextView responseField = (TextView)findViewById(R.id.textView);
-
-        PGP pgp = new PGP();
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                responseField.setText(response.body().string());
-            }
-        });
+        // Prevents users from taking a screenshot of the app
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
 
     }
 }
