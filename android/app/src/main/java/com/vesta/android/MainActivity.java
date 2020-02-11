@@ -45,19 +45,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         try {
 
+            //Use to encode public key to Base64
+            //Base64.encodeToString(keyPair.getPublic().getEncoded(), Base64.DEFAULT));
+
             KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
             keyPairGen.initialize(
                     new KeyGenParameterSpec.Builder("Key", KeyProperties.PURPOSE_ENCRYPT |
                             KeyProperties.PURPOSE_DECRYPT)
                             .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                             .build());
+
+            //Generates the keyPair
+            //Use keyPair.getPrivate() and keyPair.getPublic() to get pub and private keys
             KeyPair keyPair = keyPairGen.generateKeyPair();
 
-            System.out.println("This is Private Key");
-            System.out.println(keyPair.getPrivate());
-            System.out.println("This is Public Key");
-
-            System.out.println(Base64.encodeToString(keyPair.getPublic().getEncoded(), Base64.DEFAULT));
             // The key can also be obtained from the Android Keystore any time as follows:
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
