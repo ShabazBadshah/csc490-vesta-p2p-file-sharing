@@ -3,13 +3,27 @@ package com.vesta.android;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyProperties;
 import android.telecom.Call;
+
+import android.util.Base64;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidParameterException;
+import java.security.KeyPair;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Callback;
@@ -17,6 +31,10 @@ import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import 	java.security.KeyPairGenerator;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +43,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        try {
 
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
+            keyPairGen.initialize(
+                    new KeyGenParameterSpec.Builder("Key", KeyProperties.PURPOSE_ENCRYPT |
+                            KeyProperties.PURPOSE_DECRYPT)
+                            .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+                            .build());
+            KeyPair keyPair = keyPairGen.generateKeyPair();
+
+            System.out.println("This is Private Key");
+            System.out.println(keyPair.getPrivate());
+            System.out.println("This is Public Key");
+
+            System.out.println(Base64.encodeToString(keyPair.getPublic().getEncoded(), Base64.DEFAULT));
+            // The key can also be obtained from the Android Keystore any time as follows:
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            System.out.println(keyStore.getKey("Key", null));
+
+
+        } catch (NoSuchProviderException |  NoSuchAlgorithmException |
+                InvalidAlgorithmParameterException | KeyStoreException | CertificateException |
+                IOException | UnrecoverableKeyException e ) {
+            e.printStackTrace();
+        }
         final Button button = (Button)findViewById(R.id.button);
         final TextView responseField = (TextView)findViewById(R.id.textView);
 
@@ -54,3 +97,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
+
