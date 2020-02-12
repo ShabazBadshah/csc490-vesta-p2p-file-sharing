@@ -43,34 +43,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try {
 
-
-            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, "AndroidKeyStore");
-            keyPairGen.initialize(
-                    new KeyGenParameterSpec.Builder("Key", KeyProperties.PURPOSE_ENCRYPT |
-                            KeyProperties.PURPOSE_DECRYPT)
-                            .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                            .build());
-
-            //Generates the keyPair
-            //Use keyPair.getPrivate() and keyPair.getPublic() to get pub and private keys
-            KeyPair keyPair = keyPairGen.generateKeyPair();
-
-            //Use to encode public key to Base64
-            //Base64.encodeToString(keyPair.getPublic().getEncoded(), Base64.DEFAULT));
-
-            // The key can also be obtained from the Android Keystore any time as follows:
-            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
-            keyStore.load(null);
-            System.out.println(keyStore.getKey("Key", null));
-
-
-        } catch (NoSuchProviderException |  NoSuchAlgorithmException |
-                InvalidAlgorithmParameterException | KeyStoreException | CertificateException |
-                IOException | UnrecoverableKeyException e ) {
-            e.printStackTrace();
-        }
         final Button button = (Button)findViewById(R.id.button);
         final TextView responseField = (TextView)findViewById(R.id.textView);
 
