@@ -32,6 +32,9 @@ import java.util.Map;
  * [IMPORTANT]
  * We never expose public keys to anything expect for this application, ONLY the methods that require the private-key will have access to it (only when needed)
  * [END IMPORTANT]
+ *
+ * References:
+ * https://github.com/googlearchive/android-BasicAndroidKeyStore/blob/master/Application/src/main/java/com/example/android/basicandroidkeystore/BasicAndroidKeyStoreFragment.java
  */
 public class KeyPairManager {
 
@@ -99,6 +102,9 @@ public class KeyPairManager {
      * @throws NoSuchAlgorithmException
      * @throws IOException
      * @throws UnrecoverableEntryException
+     *
+     * References:
+     * https://stackoverflow.com/questions/42110123/save-and-retrieve-keypair-in-androidkeystore?rq=1
      */
     public static PublicKey getPublicKeyFromKeyStore(String keyPairAlias) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
 
@@ -118,10 +124,30 @@ public class KeyPairManager {
      * @return PublicKey, the PublicKey object representing the base64EncodedPublicKey string argument passed in
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeySpecException
+     *
+     * References:
+     * https://stackoverflow.com/questions/45754277/how-to-generate-publickey-from-string-java
      */
     public static PublicKey convertBase64StringToPublicKey(String base64EncodedPublicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
         byte[] encodedPublicKey = Base64.decode(base64EncodedPublicKey, Base64.DEFAULT);
         return KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(encodedPublicKey));
+    }
+
+    /**
+     * Deletes the keys associated with the keyPairAlias from the KeyStore
+     * @param keyPairAlias String, the alia of the KeyPair that is going to be deleted from the KeyStore
+     * @throws CertificateException
+     * @throws NoSuchAlgorithmException
+     * @throws KeyStoreException
+     * @throws IOException
+     */
+    public static void deleteKeysFromKeystore(String keyPairAlias) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
+        if (keyPairAlias == null || keyPairAlias.length() == 0) {
+            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "getKeyPairFromKeyStore()", "Illegal argument String:keyPairAlias provided"));
+        }
+        
+        loadKeyStore(KEY_STORE_PROVIDER_NAME);
+        keyStore.deleteEntry(keyPairAlias);
     }
 
 }
