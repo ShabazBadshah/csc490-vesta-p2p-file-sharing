@@ -17,14 +17,12 @@ public class MainActivity extends AppCompatActivity {
         final Button button = (Button)findViewById(R.id.button);
         final TextView responseField = (TextView)findViewById(R.id.textView);
 
-        PGP pgp = new PGP();
-
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                responseField.setText(response.body().string());
             }
         });
 
     }
 }
+
