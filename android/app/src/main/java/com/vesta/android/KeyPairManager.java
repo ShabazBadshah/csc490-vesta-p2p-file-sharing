@@ -72,7 +72,7 @@ public class KeyPairManager {
      * @throws IOException
      */
     private static void loadKeyStore(String keyStoreProviderName) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
-        keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
+        keyStore = KeyStore.getInstance(keyStoreProviderName);
         keyStore.load(null);
     }
 
