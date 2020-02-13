@@ -8,6 +8,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
@@ -18,6 +19,8 @@ import java.security.PublicKey;
 import 	java.security.KeyPairGenerator;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +28,10 @@ import java.util.Map;
 /**
  * Class responsible for the creation and management of Public/Private key-pairs
  *
+ *
+ * [IMPORTANT]
  * We never expose public keys to anything expect for this application, ONLY the methods that require the private-key will have access to it (only when needed)
+ * [END IMPORTANT]
  */
 public class KeyPairManager {
 
@@ -38,7 +44,7 @@ public class KeyPairManager {
      * @param keyPairAlias String, the name of the key-pair that will be saved in the KeyStore
      * @return KeyPair, returns the KeyPair that was created which contains the PublicKey and PrivateKey
      */
-    public static PublicKey generateKeyPair(final String keyPairAlias) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException, UnrecoverableEntryException {
+    public static PublicKey generateKeyPair(final String keyPairAlias) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException, UnrecoverableEntryException, InvalidKeySpecException {
 
         if (keyPairAlias == null || keyPairAlias.length() == 0) {
             throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "generateKeyPair()", "Illegal argument String:keyPairAlias provided"));
@@ -54,11 +60,8 @@ public class KeyPairManager {
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
                     .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                     .build());
-
-            KeyPair keyPair =  keyPairGen.generateKeyPair();
+            keyPairGen.generateKeyPair();
         }
-
-        Log.i(LOG_TAG, getBase64StringEncoding(getPublicKeyFromKeyStore(keyPairAlias)));
 
         return getPublicKeyFromKeyStore(keyPairAlias);
     }
@@ -79,11 +82,11 @@ public class KeyPairManager {
 
     /**
      * Returns the the Base64 encoding of the PublicKey
-     * @param key PublicKey, the PublicKey which will be converted to a Base64 String
+     * @param publicKey PublicKey, the PublicKey which will be converted to a Base64 String
      * @return String, the Base64 encoding of the PublicKey
      */
-    public static String getBase64StringEncoding(Key key) {
-        return Base64.encodeToString(key.getEncoded(), Base64.DEFAULT);
+    public static String convertPublicKeyToBase64String(PublicKey publicKey) {
+        return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
     }
 
 
@@ -106,6 +109,19 @@ public class KeyPairManager {
         loadKeyStore(KEY_STORE_PROVIDER_NAME);
 
         return keyStore.getCertificate(keyPairAlias).getPublicKey();
+    }
+
+
+    /**
+     * Converts a Base64 encoding of a PublicKey to a PublicKey object that can be used to encrypt data
+     * @param base64EncodedPublicKey String, the Base64 intepretation of a PublicKey that will be converted to a PublicKey
+     * @return PublicKey, the PublicKey object representing the base64EncodedPublicKey string argument passed in
+     * @throws NoSuchAlgorithmException
+     * @throws InvalidKeySpecException
+     */
+    public static PublicKey convertBase64StringToPublicKey(String base64EncodedPublicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        byte[] encodedPublicKey = Base64.decode(base64EncodedPublicKey, Base64.DEFAULT);
+        return KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(encodedPublicKey));
     }
 
 }

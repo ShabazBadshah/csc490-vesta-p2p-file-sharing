@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         } catch (UnrecoverableEntryException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
 
