@@ -1,12 +1,14 @@
 package com.vesta.android;
 
+import android.content.Context;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -21,9 +23,11 @@ import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.HashMap;
-import java.util.Map;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * Class responsible for the creation and management of Public/Private key-pairs
@@ -41,62 +45,70 @@ public class KeyPairManager {
     public static final String KEY_STORE_PROVIDER_NAME = "AndroidKeyStore";
     public static final String LOG_TAG = KeyPair.class.getSimpleName();
     public static KeyStore keyStore;
+    public Context context;
+
+
+    public KeyPairManager(Context context) {
+        this.context = context;
+    }
 
     /**
-     * Generates a Public/Private key-pair that can be used for encryption and decryption
+     * Generates a Public/Private key-pair that can be used for encryption and decryption, or returns the KeyPair if it already exists in the KeyStore
      * @param keyPairAlias String, the name of the key-pair that will be saved in the KeyStore
      * @return KeyPair, returns the KeyPair that was created which contains the PublicKey and PrivateKey
      */
-    public static PublicKey generateKeyPair(final String keyPairAlias) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException, InvalidAlgorithmParameterException, UnrecoverableEntryException, InvalidKeySpecException {
-
+    public KeyPair generateRsaEncryptionKeyPair(final String keyPairAlias) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException, NoSuchProviderException, UnrecoverableEntryException, InvalidAlgorithmParameterException {
         if (keyPairAlias == null || keyPairAlias.length() == 0) {
-            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "generateKeyPair()", "Illegal argument String:keyPairAlias provided"));
+            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "generateRsaEncryptionKeyPair()", "Illegal argument String:keyPairAlias"));
         }
 
-        loadKeyStore(KEY_STORE_PROVIDER_NAME);
-
-        if (!keyStore.containsAlias(keyPairAlias)) {
-            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, KEY_STORE_PROVIDER_NAME);
-            keyPairGen.initialize(
-            new KeyGenParameterSpec.Builder(keyPairAlias, KeyProperties.PURPOSE_ENCRYPT |
-                    KeyProperties.PURPOSE_DECRYPT)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    .build());
-            keyPairGen.generateKeyPair();
-        }
-
-        return getPublicKeyFromKeyStore(keyPairAlias);
-    }
-
-    /**
-     * Loads the KeyStore
-     * @param keyStoreProviderName String, the name of the key store provider that is being utilized
-     * @throws KeyStoreException
-     * @throws CertificateException
-     * @throws NoSuchAlgorithmException
-     * @throws IOException
-     */
-    private static void loadKeyStore(String keyStoreProviderName) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
-        keyStore = KeyStore.getInstance(keyStoreProviderName);
+        KeyStore keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
         keyStore.load(null);
+
+        KeyPairGenerator kpGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA);
+
+        kpGenerator.initialize(new KeyGenParameterSpec.Builder(
+                keyPairAlias,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .setKeySize(1024)
+                .build());
+
+//      storePublicKey(keyPair.getPublic());
+
+        return kpGenerator.generateKeyPair();
     }
 
 
+//    /**
+//     * Loads the KeyStore
+//     * @param keyStoreProviderName String, the name of the key store provider that is being utilized
+//     * @throws KeyStoreException
+//     * @throws CertificateException
+//     * @throws NoSuchAlgorithmException
+//     * @throws IOException
+//     */
+//    private static void loadKeyStore(String keyStoreProviderName) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+//        keyStore = KeyStore.getInstance(keyStoreProviderName);
+//        keyStore.load(null);
+//    }
+
+
     /**
-     * Returns the the Base64 encoding of the PublicKey
-     * @param publicKey PublicKey, the PublicKey which will be converted to a Base64 String
-     * @return String, the Base64 encoding of the PublicKey
+     * Returns the the Base64 encoding of the RSA Key
+     * @param rsaKey Key, the Key which will be converted to a Base64 String
+     * @return String, the Base64 encoding of the Key
      */
-    public static String convertPublicKeyToBase64String(PublicKey publicKey) {
-        return Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT);
+    public static String convertRsaKeyToBase64String(Key rsaKey) {
+        return Base64.encodeToString(rsaKey.getEncoded(), Base64.NO_PADDING);
     }
 
 
     /**
-     * Returns the PublicKey contained within the KeyStore
-     * @param keyPairAlias String, the alias of the KeyPair that the PublicKey is stored within
-     * @return PublicKey, the PublicKey stored within the KeyStore
+     * Returns the KeyPair contained within the KeyStore for the given alias
+     * @param keyPairAlias String, the alias of the KeyPair t hat the PublicKey is stored within
+     * @return KeyPair, the KeyPair associated with the alias
      * @throws KeyStoreException
      * @throws CertificateException
      * @throws NoSuchAlgorithmException
@@ -105,16 +117,25 @@ public class KeyPairManager {
      *
      * References:
      * https://stackoverflow.com/questions/42110123/save-and-retrieve-keypair-in-androidkeystore?rq=1
+     *
+     * Known Bugs:
+     *
+     * Retrieving KeyPair throws a android.os.ServiceSpecificException (code 7) Exception: https://stackoverflow.com/questions/52024752/android-9-keystore-exception-android-os-servicespecificexception
      */
-    public static PublicKey getPublicKeyFromKeyStore(String keyPairAlias) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
+    public static KeyPair getKeyPairFromKeystore(String keyPairAlias) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, UnrecoverableEntryException {
 
         if (keyPairAlias == null || keyPairAlias.length() == 0) {
-            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "getKeyPairFromKeyStore()", "Illegal argument String:keyPairAlias provided"));
+            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "getKeyPairFromKeyStore()", "Illegal argument String:keyPairAlias"));
         }
 
-        loadKeyStore(KEY_STORE_PROVIDER_NAME);
+        KeyStore keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
+        keyStore.load(null);
 
-        return keyStore.getCertificate(keyPairAlias).getPublicKey();
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyPairAlias, null);
+        PublicKey publicKey = keyStore.getCertificate(keyPairAlias).getPublicKey();
+
+//        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(keyPairAlias, null);
+        return new KeyPair(publicKey, privateKey);
     }
 
 
@@ -129,8 +150,8 @@ public class KeyPairManager {
      * https://stackoverflow.com/questions/45754277/how-to-generate-publickey-from-string-java
      */
     public static PublicKey convertBase64StringToPublicKey(String base64EncodedPublicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] encodedPublicKey = Base64.decode(base64EncodedPublicKey, Base64.DEFAULT);
-        return KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(encodedPublicKey));
+        byte[] encodedPublicKey = Base64.decode(base64EncodedPublicKey, Base64.NO_PADDING);
+        return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA).generatePublic(new X509EncodedKeySpec(encodedPublicKey));
     }
 
     /**
@@ -143,11 +164,48 @@ public class KeyPairManager {
      */
     public static void deleteKeysFromKeystore(String keyPairAlias) throws CertificateException, NoSuchAlgorithmException, KeyStoreException, IOException {
         if (keyPairAlias == null || keyPairAlias.length() == 0) {
-            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "getKeyPairFromKeyStore()", "Illegal argument String:keyPairAlias provided"));
+            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "getKeyPairFromKeyStore()", "Illegal argument String:keyPairAlias"));
         }
-        
-        loadKeyStore(KEY_STORE_PROVIDER_NAME);
+
+        KeyStore keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
+        keyStore.load(null);
+
         keyStore.deleteEntry(keyPairAlias);
     }
 
+    /**
+     * Encrypts data using the PublicKey associated with the keyPairAlias given
+     * @param keyPairAlias String, the alias of the KeyPair that will be used to encrypt the data given
+     * @param stringToEncrypt String, the data that needs to be encrypted
+     * @return String, dataToEncrypt encrypted using the keyPairAlias' PrivateKey
+     */
+    public static String encrypt(String keyPairAlias, String stringToEncrypt) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, UnrecoverableEntryException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException {
+
+        if (stringToEncrypt == null || stringToEncrypt.trim().length() == 0) {
+            throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "encrypt()", "Illegal argument String:dataToEncrypt"));
+        }
+
+        keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
+        keyStore.load(null);
+
+        byte[] encrypted = null;
+            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround"); //or try with "RSA"
+            cipher.init(Cipher.ENCRYPT_MODE, getKeyPairFromKeystore(keyPairAlias).getPublic());
+            encrypted = cipher.doFinal(stringToEncrypt.getBytes(StandardCharsets.UTF_8));
+
+        return Base64.encodeToString(encrypted, Base64.DEFAULT);
+    }
+
+    /**
+     * Decrypts data using the PrivateKey associated with the keyPairAlias given
+     * @param keyPairAlias String, the alias of the KeyPair that will be used to encrypt the data given
+     * @param stringToDecrypt String, the encrypted data that needs to be decrypted
+     * @return String, dataToEncrypt encrypted using the keyPairAlias' PrivateKey
+     */
+    public static String decrypt(String keyPairAlias, String stringToDecrypt) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchProviderException, CertificateException, UnrecoverableEntryException, KeyStoreException, IOException {
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround");
+        cipher.init(Cipher.DECRYPT_MODE, getKeyPairFromKeystore(keyPairAlias).getPrivate());
+        byte[] cipherText = cipher.doFinal(Base64.decode(stringToDecrypt, Base64.DEFAULT));
+        return new String(cipherText);
+    }
 }

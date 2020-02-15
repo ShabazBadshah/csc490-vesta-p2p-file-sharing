@@ -1,36 +1,54 @@
 package com.vesta.android;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
+import androidmads.library.qrgenearator.QRGEncoder;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ImageView qrImage;
+    private String inputValue;
+    private Bitmap bitmap;
+    private QRGEncoder qrgEncoder;
+    private Bitmap bitmapResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         // Prevents users from taking a screenshot of the app
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
 
+        String alias = "alias";
+
+        KeyPairManager kp = new KeyPairManager(getApplicationContext());
         try {
-            KeyPairManager.generateKeyPair("userKeys");
-            KeyPairManager.generateKeyPair("encryptionKeys");
+            KeyPair pair = kp.generateRsaEncryptionKeyPair(alias);
+            String encryptedtext = KeyPairManager.encrypt(alias, "Hello World");
+            Log.i("ENCRYPTED", encryptedtext);
+            Log.i("DECRYPTED", kp.decrypt(alias, encryptedtext));
         } catch (CertificateException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
@@ -41,13 +59,18 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (NoSuchProviderException e) {
             e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
         } catch (UnrecoverableEntryException e) {
             e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
             e.printStackTrace();
         }
     }
 }
-
