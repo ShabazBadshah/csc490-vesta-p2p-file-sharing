@@ -1,5 +1,8 @@
 package com.vesta.android;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
@@ -20,6 +23,7 @@ import java.security.PublicKey;
 import 	java.security.KeyPairGenerator;
 import java.security.Security;
 import java.security.UnrecoverableEntryException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
@@ -41,7 +45,12 @@ import java.util.Map;
  */
 public class KeyPairManager {
 
+
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+
     public static final String KEY_STORE_PROVIDER_NAME = "AndroidKeyStore";
+    public static final String PUBLIC_KEY = "PublicKey";
     public static final String LOG_TAG = KeyPair.class.getSimpleName();
     public static KeyStore keyStore;
 
@@ -69,16 +78,39 @@ public class KeyPairManager {
             keyPairGen.generateKeyPair();
         }
 
-        System.out.println("The providers");
-        for (Provider p : Security.getProviders()) {
-            System.out.println(p);
-        }
-
-        for (Enumeration<String> e = keyStore.aliases(); e.hasMoreElements();) {
-            System.out.println(e.nextElement());
-        }
-
         return getPublicKeyFromKeyStore(keyPairAlias);
+    }
+
+
+    /**
+     *
+     * @param sharedPrefName
+     * @param activity, which is a subclass of context
+     * @param publicKey
+     */
+    public void storePublicKeySharedPref(String sharedPrefName, Activity activity, String publicKey) {
+
+        mPreferences =  activity.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+        mEditor = mPreferences.edit();
+        mEditor.putString(PUBLIC_KEY, publicKey);
+
+        mEditor.apply();
+
+    }
+
+
+    /**
+     *
+     * @param sharedPrefName
+     * @param activity
+     * @return String representation of pub key that was stored
+     */
+    public String retrievePublicKeySharedPref(String sharedPrefName, Activity activity) {
+
+        mPreferences = activity.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+
+        //returns default value if key does not exist
+        return mPreferences.getString(PUBLIC_KEY, "");
     }
 
     /**
