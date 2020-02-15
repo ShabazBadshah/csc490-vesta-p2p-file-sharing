@@ -15,12 +15,15 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import 	java.security.KeyPairGenerator;
+import java.security.Security;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +67,15 @@ public class KeyPairManager {
                     .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
                     .build());
             keyPairGen.generateKeyPair();
+        }
+
+        System.out.println("The providers");
+        for (Provider p : Security.getProviders()) {
+            System.out.println(p);
+        }
+
+        for (Enumeration<String> e = keyStore.aliases(); e.hasMoreElements();) {
+            System.out.println(e.nextElement());
         }
 
         return getPublicKeyFromKeyStore(keyPairAlias);
