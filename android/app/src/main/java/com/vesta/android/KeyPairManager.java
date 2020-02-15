@@ -46,8 +46,8 @@ import java.util.Map;
 public class KeyPairManager {
 
 
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
+    private static SharedPreferences mPreferences;
+    private static SharedPreferences.Editor mEditor;
 
     public static final String KEY_STORE_PROVIDER_NAME = "AndroidKeyStore";
     public static final String PUBLIC_KEY = "PublicKey";
@@ -85,12 +85,12 @@ public class KeyPairManager {
     /**
      *
      * @param sharedPrefName
-     * @param activity, which is a subclass of context
+     * @param context, which is a subclass of context
      * @param publicKey
      */
-    public void storePublicKeySharedPref(String sharedPrefName, Activity activity, String publicKey) {
+    public static void storePublicKeySharedPref(String sharedPrefName, Context context, String publicKey) {
 
-        mPreferences =  activity.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+        mPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
         mEditor = mPreferences.edit();
         mEditor.putString(PUBLIC_KEY, publicKey);
 
@@ -102,12 +102,12 @@ public class KeyPairManager {
     /**
      *
      * @param sharedPrefName
-     * @param activity
+     * @param context
      * @return String representation of pub key that was stored
      */
-    public String retrievePublicKeySharedPref(String sharedPrefName, Activity activity) {
+    public static String retrievePublicKeySharedPref(String sharedPrefName, Context context) {
 
-        mPreferences = activity.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+        mPreferences = context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
 
         //returns default value if key does not exist
         return mPreferences.getString(PUBLIC_KEY, "");
