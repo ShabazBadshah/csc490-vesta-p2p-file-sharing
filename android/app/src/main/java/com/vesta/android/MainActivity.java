@@ -24,6 +24,14 @@ import androidmads.library.qrgenearator.QRGContents;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyPair;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -94,5 +102,29 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                  WindowManager.LayoutParams.FLAG_SECURE);
+
+          try {
+              KeyPairManager.generateKeyPair("userKeys");
+              KeyPairManager.generateKeyPair("encryptionKeys");
+          } catch (CertificateException e) {
+              e.printStackTrace();
+          } catch (NoSuchAlgorithmException e) {
+              e.printStackTrace();
+          } catch (KeyStoreException e) {
+              e.printStackTrace();
+          } catch (IOException e) {
+              e.printStackTrace();
+          } catch (NoSuchProviderException e) {
+              e.printStackTrace();
+          } catch (InvalidAlgorithmParameterException e) {
+              e.printStackTrace();
+          } catch (UnrecoverableEntryException e) {
+              e.printStackTrace();
+          } catch (InvalidKeySpecException e) {
+              e.printStackTrace();
+          }
     }
 }
+

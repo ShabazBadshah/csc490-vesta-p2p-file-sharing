@@ -1,0 +1,26 @@
+Done
+
+- Test Jira integration with GitHub repo
+- Generate public/private key on Android device
+- Generate an encryption public/private key pair
+- Basic web page template 
+- Random QR Generator for web
+
+In Progress
+
+- Investigation for converting Data into QR 
+- UI Design for web
+
+Selected for next development
+
+- Generate QR code to share public keys
+- Android UX
+
+Backlog
+
+- Key transfer between phones
+- Key transfer between phone and computer
+- File encryption 
+- File transfer between computers
+- Securely Receive files on computer
+- Scan QR code from device and save public key
