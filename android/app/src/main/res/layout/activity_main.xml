@@ -22,15 +22,15 @@
         app:layout_constraintVertical_bias="0.367" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/scanQR"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Do a Get"
+        android:text="Scan a QR"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.427"
+        app:layout_constraintHorizontal_bias="0.845"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="84dp" />
+        tools:layout_editor_absoluteY="173dp" />
 
     <Button
         android:id="@+id/qrbutton"
@@ -38,10 +38,10 @@
         android:layout_height="wrap_content"
         android:text="Generate QR Code"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.427"
+        app:layout_constraintHorizontal_bias="0.113"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="171dp" />
+        tools:layout_editor_absoluteY="173dp" />
 
     <ImageView
         android:id="@+id/qr_image"

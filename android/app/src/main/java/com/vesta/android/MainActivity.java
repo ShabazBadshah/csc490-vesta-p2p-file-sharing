@@ -1,16 +1,16 @@
 package com.vesta.android;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.ImageView;
-import android.graphics.Point;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStoreException;
@@ -19,10 +19,11 @@ import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
+import android.widget.TextView;
 
-import android.graphics.Bitmap;
-import androidmads.library.qrgenearator.QRGEncoder;
+import androidx.appcompat.app.AppCompatActivity;
 import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,10 +64,19 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        final Button button = (Button)findViewById(R.id.button);
+        final Button scanQRButton = (Button)findViewById(R.id.scanQR);
         final Button qr_button = (Button)findViewById(R.id.qrbutton);
         qrImage = findViewById(R.id.qr_image);
         final TextView responseField = (TextView)findViewById(R.id.textView);
+
+        scanQRButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), QRScannerActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
         qr_button.setOnClickListener(new View.OnClickListener() {
             @Override
