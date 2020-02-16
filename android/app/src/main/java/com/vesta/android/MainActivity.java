@@ -31,10 +31,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             KeyPairManager.generateKeyPair("userKeys");
             KeyPairManager.generateKeyPair("encryptionKeys");
-            System.out.println("HERE");
-            System.out.println(KeyPairManager.retrievePublicKeySharedPref("myPref", this.getBaseContext()));
-            //KeyPairManager.removePublicKeySharedPref();
-            //System.out.println(KeyPairManager.retrievePublicKeySharedPref("myPref", this.getBaseContext()));
 
         } catch (CertificateException e) {
             e.printStackTrace();
