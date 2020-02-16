@@ -50,6 +50,7 @@ public class KeyPairManager {
     private static SharedPreferences.Editor mEditor;
 
     public static final String KEY_STORE_PROVIDER_NAME = "AndroidKeyStore";
+    public static final String KEY_DOES_NOT_EXIST = "KeyDoesNotExist";
     public static final String PUBLIC_KEY = "PublicKey";
     public static final String LOG_TAG = KeyPair.class.getSimpleName();
     public static KeyStore keyStore;
@@ -98,7 +99,6 @@ public class KeyPairManager {
 
     }
 
-
     /**
      *
      * @param sharedPrefName
@@ -110,7 +110,24 @@ public class KeyPairManager {
         mPreferences = context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
 
         //returns default value if key does not exist
-        return mPreferences.getString(PUBLIC_KEY, "");
+        return mPreferences.getString(PUBLIC_KEY, KEY_DOES_NOT_EXIST);
+    }
+
+    /**
+     * Removes the public key stored in shared preferences
+     */
+    public static void removePublicKeySharedPref() throws SharedPrefKeyNotFoundException {
+
+        mEditor = mPreferences.edit();
+
+        if (!mPreferences.getString(PUBLIC_KEY, KEY_DOES_NOT_EXIST).equals(KEY_DOES_NOT_EXIST)) {
+            mEditor.remove(PUBLIC_KEY);
+            mEditor.apply();
+        }
+        else {
+            throw new SharedPrefKeyNotFoundException("The key you are trying to remove has not" +
+                    " been stored");
+        }
     }
 
     /**
@@ -192,6 +209,16 @@ public class KeyPairManager {
         
         loadKeyStore(KEY_STORE_PROVIDER_NAME);
         keyStore.deleteEntry(keyPairAlias);
+    }
+
+    /**
+     * Custom exception for key not found in SharedPref
+     */
+    public static class SharedPrefKeyNotFoundException extends Exception {
+
+        public SharedPrefKeyNotFoundException(String message) {
+            super(message);
+        }
     }
 
 }
