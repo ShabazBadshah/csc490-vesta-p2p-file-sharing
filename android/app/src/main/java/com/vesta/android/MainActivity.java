@@ -29,6 +29,11 @@ import androidmads.library.qrgenearator.QRGContents;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
