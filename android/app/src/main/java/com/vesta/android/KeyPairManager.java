@@ -84,7 +84,7 @@ public class KeyPairManager {
 
 
     /**
-     *
+     * Stores the public key in the shared preferences
      * @param sharedPrefName
      * @param context, which is a subclass of context
      * @param publicKey
@@ -100,7 +100,7 @@ public class KeyPairManager {
     }
 
     /**
-     *
+     * Retrieves the public key from the shared preferences
      * @param sharedPrefName
      * @param context
      * @return String representation of pub key that was stored
