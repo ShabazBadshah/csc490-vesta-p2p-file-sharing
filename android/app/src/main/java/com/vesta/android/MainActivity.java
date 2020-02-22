@@ -1,37 +1,20 @@
 package com.vesta.android;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.telecom.Call;
 import android.util.Log;
-import android.view.View;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.ImageView;
-import android.graphics.Point;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.Callback;
-import okhttp3.Headers;
-
-import android.graphics.Bitmap;
 import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGContents;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyPair;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,33 +30,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button button = (Button)findViewById(R.id.button);
         final Button qr_button = (Button)findViewById(R.id.qrbutton);
         qrImage = findViewById(R.id.qr_image);
-        final TextView responseField = (TextView)findViewById(R.id.textView);
 
-        final OkHttpClient client = new OkHttpClient();
+        final Button scanQRButton = (Button)findViewById(R.id.scanQR);
+        qrImage = findViewById(R.id.qr_image);
 
-
-
-        button.setOnClickListener(new View.OnClickListener() {
+        scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new Thread(new Runnable(){
-                    @Override
-                    public void run() {
-                        try {
-                            final Request request = new Request.Builder()
-                                    .url("http://10.0.2.2:5000/")
-                                    .build();
-                            Response response = client.newCall(request).execute();
-                            Log.v("VESTA-LOG", response.toString());
-                            responseField.setText(response.body().string());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                Intent intent = new Intent(view.getContext(), QRScannerActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -102,28 +69,5 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                  WindowManager.LayoutParams.FLAG_SECURE);
-
-          try {
-              KeyPairManager.generateKeyPair("userKeys");
-              KeyPairManager.generateKeyPair("encryptionKeys");
-          } catch (CertificateException e) {
-              e.printStackTrace();
-          } catch (NoSuchAlgorithmException e) {
-              e.printStackTrace();
-          } catch (KeyStoreException e) {
-              e.printStackTrace();
-          } catch (IOException e) {
-              e.printStackTrace();
-          } catch (NoSuchProviderException e) {
-              e.printStackTrace();
-          } catch (InvalidAlgorithmParameterException e) {
-              e.printStackTrace();
-          } catch (UnrecoverableEntryException e) {
-              e.printStackTrace();
-          } catch (InvalidKeySpecException e) {
-              e.printStackTrace();
-          }
     }
 }
