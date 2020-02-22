@@ -10,12 +10,31 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import java.io.IOException;
+
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 
 import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGContents;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
         final Button qr_button = (Button)findViewById(R.id.qrbutton);
         qrImage = findViewById(R.id.qr_image);
-
         final Button scanQRButton = (Button)findViewById(R.id.scanQR);
         qrImage = findViewById(R.id.qr_image);
 
@@ -43,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
 
         qr_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +84,30 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
-
         });
+
+         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                  WindowManager.LayoutParams.FLAG_SECURE);
+
+          try {
+              KeyPairManager.generateKeyPair("userKeys");
+              KeyPairManager.generateKeyPair("encryptionKeys");
+          } catch (CertificateException e) {
+              e.printStackTrace();
+          } catch (NoSuchAlgorithmException e) {
+              e.printStackTrace();
+          } catch (KeyStoreException e) {
+              e.printStackTrace();
+          } catch (IOException e) {
+              e.printStackTrace();
+          } catch (NoSuchProviderException e) {
+              e.printStackTrace();
+          } catch (InvalidAlgorithmParameterException e) {
+              e.printStackTrace();
+          } catch (UnrecoverableEntryException e) {
+              e.printStackTrace();
+          } catch (InvalidKeySpecException e) {
+              e.printStackTrace();
+          }
     }
 }
