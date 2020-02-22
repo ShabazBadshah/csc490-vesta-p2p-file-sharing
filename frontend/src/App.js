@@ -1,17 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import QrGenerator from "./components/qrGenerator";
 
 function App() {
-
   return (
-
-    <div className="App">
-      <header className="App-header" >
-        <p>
-        Vesta.io
-        </p>
-      </header>
+    <div>
+      <QrGenerator> </QrGenerator>
+      <div className="App">
+        <header className="App-header">
+          <p>Vesta.io</p>
+        </header>
+      </div>
     </div>
   );
 }
