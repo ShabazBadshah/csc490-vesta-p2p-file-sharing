@@ -38,10 +38,10 @@
         android:layout_height="wrap_content"
         android:text="Generate QR Code"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.113"
+        app:layout_constraintHorizontal_bias="0.427"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="173dp" />
+        tools:layout_editor_absoluteY="171dp" />
 
     <ImageView
         android:id="@+id/qr_image"
@@ -53,6 +53,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.572" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

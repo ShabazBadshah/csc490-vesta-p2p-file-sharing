@@ -11,19 +11,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-import android.widget.TextView;
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidmads.library.qrgenearator.QRGContents;
-import androidmads.library.qrgenearator.QRGEncoder;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,38 +28,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Prevents users from taking a screenshot of the app
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
-
-        try {
-            KeyPairManager.generateKeyPair("userKeys");
-            KeyPairManager.generateKeyPair("encryptionKeys");
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (UnrecoverableEntryException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        }
-
         setContentView(R.layout.activity_main);
 
-        final Button scanQRButton = (Button)findViewById(R.id.scanQR);
         final Button qr_button = (Button)findViewById(R.id.qrbutton);
         qrImage = findViewById(R.id.qr_image);
-        final TextView responseField = (TextView)findViewById(R.id.textView);
+
+        final Button scanQRButton = (Button)findViewById(R.id.scanQR);
+        qrImage = findViewById(R.id.qr_image);
 
         scanQRButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,4 +71,3 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 }
-
