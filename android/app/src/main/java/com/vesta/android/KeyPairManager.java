@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import android.content.SharedPreferences;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -47,6 +48,12 @@ public class KeyPairManager {
     public static KeyStore keyStore;
     public Context context;
 
+    private static SharedPreferences mPreferences;
+    private static SharedPreferences.Editor mEditor;
+
+    public static final String KEY_DOES_NOT_EXIST = "KeyDoesNotExist";
+    public static final String PUBLIC_KEY = "PublicKey";
+
 
     public KeyPairManager(Context context) {
         this.context = context;
@@ -75,24 +82,8 @@ public class KeyPairManager {
                 .setKeySize(1024)
                 .build());
 
-//      storePublicKey(keyPair.getPublic());
-
         return kpGenerator.generateKeyPair();
     }
-
-
-//    /**
-//     * Loads the KeyStore
-//     * @param keyStoreProviderName String, the name of the key store provider that is being utilized
-//     * @throws KeyStoreException
-//     * @throws CertificateException
-//     * @throws NoSuchAlgorithmException
-//     * @throws IOException
-//     */
-//    private static void loadKeyStore(String keyStoreProviderName) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
-//        keyStore = KeyStore.getInstance(keyStoreProviderName);
-//        keyStore.load(null);
-//    }
 
 
     /**
@@ -102,6 +93,54 @@ public class KeyPairManager {
      */
     public static String convertRsaKeyToBase64String(Key rsaKey) {
         return Base64.encodeToString(rsaKey.getEncoded(), Base64.NO_PADDING);
+    }
+
+
+    /**
+     * Stores the public key in the shared preferences
+     * @param sharedPrefName
+     * @param context, which is a subclass of context
+     * @param publicKey
+     */
+    public static void storePublicKeySharedPref(String sharedPrefName, Context context, String publicKey) {
+
+        mPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+        mEditor = mPreferences.edit();
+        mEditor.putString(PUBLIC_KEY, publicKey);
+
+        mEditor.apply();
+    }
+
+
+    /**
+     * Retrieves the public key from the shared preferences
+     * @param sharedPrefName
+     * @param context
+     * @return String representation of pub key that was stored
+     */
+    public static String retrievePublicKeySharedPref(String sharedPrefName, Context context) {
+
+        mPreferences = context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+
+        //returns default value if key does not exist
+        return mPreferences.getString(PUBLIC_KEY, KEY_DOES_NOT_EXIST);
+    }
+
+
+    /**
+     * Removes the public key stored in shared preferences
+     */
+    public static void removePublicKeySharedPref() throws SharedPrefKeyNotFoundException {
+
+        mEditor = mPreferences.edit();
+
+        if (!mPreferences.getString(PUBLIC_KEY, KEY_DOES_NOT_EXIST).equals(KEY_DOES_NOT_EXIST)) {
+            mEditor.remove(PUBLIC_KEY);
+            mEditor.apply();
+        }
+        else {
+            throw new SharedPrefKeyNotFoundException("The key you are trying to remove has not been stored");
+        }
     }
 
 
@@ -134,7 +173,6 @@ public class KeyPairManager {
         PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyPairAlias, null);
         PublicKey publicKey = keyStore.getCertificate(keyPairAlias).getPublicKey();
 
-//        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(keyPairAlias, null);
         return new KeyPair(publicKey, privateKey);
     }
 
@@ -150,9 +188,10 @@ public class KeyPairManager {
      * https://stackoverflow.com/questions/45754277/how-to-generate-publickey-from-string-java
      */
     public static PublicKey convertBase64StringToPublicKey(String base64EncodedPublicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        byte[] encodedPublicKey = Base64.decode(base64EncodedPublicKey, Base64.NO_PADDING);
+        byte[] encodedPublicKey = Base64.decode(base64EncodedPublicKey, Base64.DEFAULT);
         return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA).generatePublic(new X509EncodedKeySpec(encodedPublicKey));
     }
+
 
     /**
      * Deletes the keys associated with the keyPairAlias from the KeyStore
@@ -173,6 +212,7 @@ public class KeyPairManager {
         keyStore.deleteEntry(keyPairAlias);
     }
 
+
     /**
      * Encrypts data using the PublicKey associated with the keyPairAlias given
      * @param keyPairAlias String, the alias of the KeyPair that will be used to encrypt the data given
@@ -188,13 +228,13 @@ public class KeyPairManager {
         keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
         keyStore.load(null);
 
-        byte[] encrypted = null;
-            Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround"); //or try with "RSA"
-            cipher.init(Cipher.ENCRYPT_MODE, getKeyPairFromKeystore(keyPairAlias).getPublic());
-            encrypted = cipher.doFinal(stringToEncrypt.getBytes(StandardCharsets.UTF_8));
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround"); //or try with "RSA"
+        cipher.init(Cipher.ENCRYPT_MODE, getKeyPairFromKeystore(keyPairAlias).getPublic());
+        byte[] encrypted = cipher.doFinal(stringToEncrypt.getBytes(StandardCharsets.UTF_8));
 
         return Base64.encodeToString(encrypted, Base64.DEFAULT);
     }
+
 
     /**
      * Decrypts data using the PrivateKey associated with the keyPairAlias given
@@ -208,4 +248,11 @@ public class KeyPairManager {
         byte[] cipherText = cipher.doFinal(Base64.decode(stringToDecrypt, Base64.DEFAULT));
         return new String(cipherText);
     }
+
+    public static class SharedPrefKeyNotFoundException extends Exception {
+        public SharedPrefKeyNotFoundException(String message) {
+            super(message);
+        }
+    }
+
 }
