@@ -1,16 +1,10 @@
 package com.vesta.android;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.io.IOException;
 
@@ -22,19 +16,21 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
-
-import androidmads.library.qrgenearator.QRGEncoder;
-import androidmads.library.qrgenearator.QRGContents;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import androidmads.library.qrgenearator.QRGEncoder;
-import androidmads.library.qrgenearator.QRGContents;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
 
-import androidx.appcompat.app.AppCompatActivity;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,6 +44,42 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Prevents users from taking a screenshot of the app
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
+        String alias = "alias";
+
+        KeyPairManager kp = new KeyPairManager(getApplicationContext());
+        try {
+            KeyPair pair = kp.generateRsaEncryptionKeyPair(alias);
+            String encryptedtext = KeyPairManager.encrypt(alias, "Hello World");
+            Log.i("ENCRYPTED", encryptedtext);
+            Log.i("DECRYPTED", kp.decrypt(alias, encryptedtext));
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableEntryException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
 
         final Button qr_button = (Button)findViewById(R.id.qrbutton);
         qrImage = findViewById(R.id.qr_image);
@@ -82,32 +114,8 @@ public class MainActivity extends AppCompatActivity {
                 } catch (Exception e) {
                     Log.v("Log error", e.toString());
                 }
-
             }
         });
-
-         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                  WindowManager.LayoutParams.FLAG_SECURE);
-
-          try {
-              KeyPairManager.generateKeyPair("userKeys");
-              KeyPairManager.generateKeyPair("encryptionKeys");
-          } catch (CertificateException e) {
-              e.printStackTrace();
-          } catch (NoSuchAlgorithmException e) {
-              e.printStackTrace();
-          } catch (KeyStoreException e) {
-              e.printStackTrace();
-          } catch (IOException e) {
-              e.printStackTrace();
-          } catch (NoSuchProviderException e) {
-              e.printStackTrace();
-          } catch (InvalidAlgorithmParameterException e) {
-              e.printStackTrace();
-          } catch (UnrecoverableEntryException e) {
-              e.printStackTrace();
-          } catch (InvalidKeySpecException e) {
-              e.printStackTrace();
-          }
     }
+
 }
