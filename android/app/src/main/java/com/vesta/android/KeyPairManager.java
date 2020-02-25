@@ -10,6 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.google.gson.Gson;
+
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -45,6 +49,8 @@ public class KeyPairManager {
 
     public static final String KEY_STORE_PROVIDER_NAME = "AndroidKeyStore";
     public static final String LOG_TAG = KeyPair.class.getSimpleName();
+    private static PublicKey publicKeyObject;
+
     public static KeyStore keyStore;
     public Context context;
 
@@ -53,6 +59,7 @@ public class KeyPairManager {
 
     public static final String KEY_DOES_NOT_EXIST = "KeyDoesNotExist";
     public static final String PUBLIC_KEY = "PublicKey";
+
 
 
     public KeyPairManager(Context context) {
@@ -104,9 +111,22 @@ public class KeyPairManager {
      */
     public static void storePublicKeySharedPref(String sharedPrefName, Context context, String publicKey) {
 
+        //Convert the string public key to public key object
+        try {
+             publicKeyObject = KeyPairManager.convertBase64StringToPublicKey(publicKey);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+
         mPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
         mEditor = mPreferences.edit();
-        mEditor.putString(PUBLIC_KEY, publicKey);
+
+        Log.i("PublicKeyObject", publicKeyObject.toString());
+
+        //Storing the object representation, used toString() to bypass error
+        mEditor.putString(PUBLIC_KEY, publicKeyObject.toString());
 
         mEditor.apply();
 

@@ -115,9 +115,13 @@ public class MainActivity extends AppCompatActivity {
                 int smallerDimension = width < height ? width : height;
                 smallerDimension = smallerDimension * 3 / 4;
 
-                System.out.println("THE KEYYYYY " + KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()));
+
                 qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()),
                         null, QRGContents.Type.TEXT, smallerDimension);
+
+                Log.i("OriginalPubKeyObject", pair.getPublic().toString());
+                Log.i("StringPublicKey", KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()));
+
                 final TextView tView = findViewById(R.id.textView);
 
                 try {

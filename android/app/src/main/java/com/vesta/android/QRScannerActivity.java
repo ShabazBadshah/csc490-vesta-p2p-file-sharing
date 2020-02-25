@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import java.security.Key;
 
 import com.google.zxing.Result;
 import com.google.zxing.MultiFormatReader;
@@ -59,13 +60,18 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         mScannerView.stopCamera();           // Stop camera on pause
     }
 
+    /**
+     * RawResult, which is the data retrieved from the QR code
+     * @param rawResult
+     */
     @Override
     public void handleResult(Result rawResult) {
 
         //Storing the rawResult which is the public key in shared preferences
         KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
                 rawResult.getText());
-        Log.v(TAG, KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
+        Log.i("Retrieve shared pref",
+                KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
 
         System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
