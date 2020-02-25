@@ -32,6 +32,7 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -114,8 +115,11 @@ public class MainActivity extends AppCompatActivity {
                 int smallerDimension = width < height ? width : height;
                 smallerDimension = smallerDimension * 3 / 4;
 
+                System.out.println("THE KEYYYYY " + KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()));
                 qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()),
                         null, QRGContents.Type.TEXT, smallerDimension);
+                final TextView tView = findViewById(R.id.textView);
+
                 try {
                     bitmapResult = qrgEncoder.encodeAsBitmap();
                     qrImage.setImageBitmap(bitmapResult);

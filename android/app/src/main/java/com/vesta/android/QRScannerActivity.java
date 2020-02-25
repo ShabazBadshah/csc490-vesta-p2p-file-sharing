@@ -21,6 +21,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private ZXingScannerView mScannerView;
     private final int MY_CAMERA_REQUEST_CODE = 1888;
     private static final String TAG = "ScannerActivity";
+    private static final String SHARED_PREFERENCES = "SharedPreferences";
 
     private void setScannerProperties(ZXingScannerView qrCodeScanner) {
         qrCodeScanner.setAutoFocus(true);
@@ -60,11 +61,15 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
     @Override
     public void handleResult(Result rawResult) {
-        // Do something with the result here
-          System.out.println("This is the result " + rawResult);
-          System.out.println(((TextView)findViewById(R.id.textView)));
-          Log.v(TAG, rawResult.getText()); // Prints scan result
-          Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+
+        //Storing the rawResult which is the public key in shared preferences
+        KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+                rawResult.getText());
+        Log.v(TAG, KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
+
+        System.out.println(((TextView)findViewById(R.id.textView)));
+        Log.v(TAG, rawResult.getText()); // Prints scan result
+        Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
         setContentView(R.layout.activity_main);
 
         TextView myAwesomeTextView = (TextView)findViewById(R.id.textView);
