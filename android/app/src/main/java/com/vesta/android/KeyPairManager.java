@@ -12,8 +12,6 @@ import java.security.InvalidKeyException;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -104,7 +102,7 @@ public class KeyPairManager {
 
 
     /**
-     * Stores the public key in the shared preferences
+     * Stores the public key object in the shared preferences
      * @param sharedPrefName
      * @param context, which is a subclass of context
      * @param publicKey
