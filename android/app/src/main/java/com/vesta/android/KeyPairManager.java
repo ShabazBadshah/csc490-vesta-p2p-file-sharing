@@ -109,6 +109,7 @@ public class KeyPairManager {
         mEditor.putString(PUBLIC_KEY, publicKey);
 
         mEditor.apply();
+
     }
 
 

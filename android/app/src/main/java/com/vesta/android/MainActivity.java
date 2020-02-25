@@ -1,6 +1,7 @@
 package com.vesta.android;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -32,6 +33,11 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
 public class MainActivity extends AppCompatActivity {
 
     private ImageView qrImage;
@@ -39,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private QRGEncoder qrgEncoder;
     private Bitmap bitmapResult;
+    private KeyPair pair;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         KeyPairManager kp = new KeyPairManager(getApplicationContext());
         try {
-            KeyPair pair = kp.generateRsaEncryptionKeyPair(alias);
+            pair = kp.generateRsaEncryptionKeyPair(alias);
             String encryptedtext = KeyPairManager.encrypt(alias, "Hello World");
             Log.i("ENCRYPTED", encryptedtext);
             Log.i("DECRYPTED", kp.decrypt(alias, encryptedtext));
@@ -107,7 +114,8 @@ public class MainActivity extends AppCompatActivity {
                 int smallerDimension = width < height ? width : height;
                 smallerDimension = smallerDimension * 3 / 4;
 
-                qrgEncoder = new QRGEncoder("AVI IS THE FIRST", null, QRGContents.Type.TEXT, smallerDimension);
+                qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()),
+                        null, QRGContents.Type.TEXT, smallerDimension);
                 try {
                     bitmapResult = qrgEncoder.encodeAsBitmap();
                     qrImage.setImageBitmap(bitmapResult);

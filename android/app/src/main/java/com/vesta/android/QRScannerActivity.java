@@ -1,15 +1,18 @@
 package com.vesta.android;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.zxing.Result;
+import com.google.zxing.MultiFormatReader;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -30,8 +33,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         super.onCreate(savedInstanceState);
         mScannerView = new ZXingScannerView(this);   // Programmatically initialize the scanner view
         setContentView(mScannerView);                // Set the scanner view as the content view
-        Log.println(1,"","got here");
-
 
     }
 
@@ -60,9 +61,14 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     @Override
     public void handleResult(Result rawResult) {
         // Do something with the result here
+          System.out.println("This is the result " + rawResult);
+          System.out.println(((TextView)findViewById(R.id.textView)));
           Log.v(TAG, rawResult.getText()); // Prints scan result
           Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
+        setContentView(R.layout.activity_main);
 
+        TextView myAwesomeTextView = (TextView)findViewById(R.id.textView);
+        myAwesomeTextView.setText(rawResult.getText());
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }
