@@ -22,6 +22,11 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private ZXingScannerView mScannerView;
     private final int MY_CAMERA_REQUEST_CODE = 1888;
     private static final String TAG = "ScannerActivity";
+
+    /*
+    * The name of our shared preferences
+    * Used to instantiate the shared preferences object with this name
+    * */
     private static final String SHARED_PREFERENCES = "SharedPreferences";
 
     private void setScannerProperties(ZXingScannerView qrCodeScanner) {
@@ -61,8 +66,9 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     }
 
     /**
-     * RawResult, which is the data retrieved from the QR code
-     * @param rawResult
+     * The rawResult variable contains the data which was present in the QR code
+     * Used to get the contents from the QR code
+     * @param rawResult, Result object retrieved from the QR code
      */
     @Override
     public void handleResult(Result rawResult) {
@@ -78,8 +84,8 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
         setContentView(R.layout.activity_main);
 
-        TextView myAwesomeTextView = (TextView)findViewById(R.id.textView);
-        myAwesomeTextView.setText(rawResult.getText());
+        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
+        publicKeyTextView.setText(rawResult.getText());
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }

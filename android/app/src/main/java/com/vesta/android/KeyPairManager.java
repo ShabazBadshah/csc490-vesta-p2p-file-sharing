@@ -56,8 +56,12 @@ public class KeyPairManager {
     private static SharedPreferences.Editor mEditor;
 
     public static final String KEY_DOES_NOT_EXIST = "KeyDoesNotExist";
-    public static final String PUBLIC_KEY = "PublicKey";
 
+    /*
+    * The shared preferences contains key-value pair
+    * PUBLIC_KEY constant is used as the key in shared preferences
+    * */
+    public static final String PUBLIC_KEY = "PublicKey";
 
 
     public KeyPairManager(Context context) {
