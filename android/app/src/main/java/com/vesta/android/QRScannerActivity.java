@@ -80,8 +80,13 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         String androidID = Secure.getString(this.getBaseContext().getContentResolver(),
                 Secure.ANDROID_ID);
 
-        KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                rawResult.getText(), androidID);
+
+        //Only call store shared pref if key does not exist already
+        if (!KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES,this.getBaseContext(),
+                androidID).equals(KeyPairManager.KEY_DOES_NOT_EXIST)) {
+            KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+                    rawResult.getText(), androidID);
+        }
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
                         androidID));
