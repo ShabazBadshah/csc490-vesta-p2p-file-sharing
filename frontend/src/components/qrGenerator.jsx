@@ -6,6 +6,19 @@ class QrGenerator extends Component {
 
   render() {
 
+    /*
+
+    The following generates a random qr code based on a key generated through
+    WebAssembly import, the following import can be found below:
+
+    - References:
+    https://medium.com/cubbit/how-to-build-a-crypto-isomorphic-library-with-javascript-and-webassembly-6fc7aa708437
+    https://github.com/cubbit/enigma
+
+    */
+
+
+
     const key = Enigma.AES.create_key()
     // textEnd = TextEncoder("utf-8").encode(myString);
     const textDec = new TextDecoder("utf-8").decode(key).substring(0, 12);
