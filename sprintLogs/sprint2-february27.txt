@@ -1,0 +1,24 @@
+Done
+
+- "Basic" android UX
+- "Basic"  frontend
+- Designed frontend UX (theme)
+- Transfer pubkeys via QR
+- Encrypt/Decrypt text
+
+In Progress
+
+- Web RTC
+- Backend
+
+Selected for next development
+
+- Web RTC connection from android phone to browser
+
+Backlog
+
+- Key transfer between phone and computer
+- File encryption 
+- File transfer between computers
+- Securely Receive files on computer
+- Scan QR code from device and save public key
