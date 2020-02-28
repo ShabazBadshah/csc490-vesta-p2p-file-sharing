@@ -1,7 +1,6 @@
 package com.vesta.android;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,10 +9,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import java.security.Key;
 
 import com.google.zxing.Result;
-import com.google.zxing.MultiFormatReader;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -77,7 +74,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
                 rawResult.getText());
         Log.i("Retrieve shared pref",
-                KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
+                KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));
 
         System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
