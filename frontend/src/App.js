@@ -20,9 +20,7 @@ import QrGenerator from './components/qrGenerator';
 import Navigation from './components/navigation';
 
 function App() {
-
   return (
-
     <div>
 
     <img src={background} style={{
@@ -45,7 +43,6 @@ function App() {
     </Card>
 
     <div style={{position: "absolute", top: "8px", left: "16px", fontSize: "48px", color: "black"}}> Vesta < /div>
-
     </div>
   );
 }
