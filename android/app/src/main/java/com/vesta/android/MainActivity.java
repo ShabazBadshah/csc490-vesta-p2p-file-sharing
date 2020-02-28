@@ -99,4 +99,3 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
         startActivity(intent);
     }
-}
