@@ -127,7 +127,15 @@ public class KeyPairManager {
         //Storing the object representation, used toString() to bypass error
         mEditor.putString(androidId, publicKeyObject.toString());
 
+        mEditor.commit();
         mEditor.apply();
+
+        for (String s : mPreferences.getAll().keySet()) {
+
+            System.out.println("STRINGS IN KEY SET: " + s);
+            System.out.println(mPreferences.getAll().keySet().size());
+        }
+
 
     }
 
@@ -143,6 +151,7 @@ public class KeyPairManager {
                                                      final String androidID) {
 
         mPreferences = context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+
 
         //returns default value if key does not exist
         return mPreferences.getString(androidID, KEY_DOES_NOT_EXIST);
