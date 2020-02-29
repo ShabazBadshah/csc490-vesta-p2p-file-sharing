@@ -1,26 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/primaryBrandColour">
+
 
     <Button
-        android:id="@+id/generateQR"
-        android:layout_width="264dp"
-        android:layout_height="133dp"
-        android:text="Generate QR"
-        android:textSize="33sp"
-        tools:layout_editor_absoluteX="86dp"
-        tools:layout_editor_absoluteY="217dp" />
-
-    <Button
-        android:id="@+id/scanQR"
-        android:layout_width="270dp"
-        android:layout_height="138dp"
+        android:layout_width="194dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:height="100dp"
+        android:background="@drawable/btn_rounded"
+        android:color="@android:color/white"
+        android:drawableLeft="@drawable/ic_send_file_icon"
+        android:drawablePadding="6dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center|center_vertical"
+        android:padding="10dp"
         android:text="Scan QR"
-        android:textSize="33sp"
-        tools:layout_editor_absoluteX="82dp"
-        tools:layout_editor_absoluteY="392dp" />
+        android:textColor="#000"
+        tools:layout_editor_absoluteX="92dp"
+        tools:layout_editor_absoluteY="307dp" />
+
+    <Button
+        android:layout_width="194dp"
+        android:layout_height="45dp"
+        android:layout_weight="1"
+        android:height="100dp"
+        android:background="@drawable/btn_rounded"
+        android:color="@android:color/white"
+        android:drawableLeft="@drawable/ic_generate_key_icon"
+        android:drawablePadding="6dp"
+        android:fontFamily="@font/roboto_medium"
+        android:gravity="center|center_horizontal"
+        android:padding="10dp"
+        android:text="Regenerate Keys"
+        android:textColor="#000"
+        tools:layout_editor_absoluteX="92dp"
+        tools:layout_editor_absoluteY="393dp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="66dp"
+        android:layout_height="49dp"
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_app_logo_"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.385"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.913" />
+
+    <TextView
+        android:id="@+id/vesta-brand-text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp"
+        android:fontFamily="@font/roboto_medium"
+        android:text="@string/app_name"
+        android:textColor="@android:color/white"
+        android:textSize="25sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.565"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="vesta" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
