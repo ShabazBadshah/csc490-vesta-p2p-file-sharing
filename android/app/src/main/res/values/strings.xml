@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Vesta</string>
+    <string name="app_name">vesta</string>
     <string name="title_activity_qrscanner">QRScannerActivity</string>
 </resources>
