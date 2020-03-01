@@ -31,8 +31,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity">
-            android:name=".MainActivity"
+        <activity android:name=".MainActivity"
             android:label="@string/title_activity_qrscanner"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
