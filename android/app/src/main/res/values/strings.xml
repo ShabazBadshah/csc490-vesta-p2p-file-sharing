@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">vesta</string>
     <string name="title_activity_qrscanner">QRScannerActivity</string>
+    <string name="regenerate_key">Regenerate Key</string>
+    <string name="vesta_logo">vesta logo</string>
+    <string name="scan_qr">Scan QR</string>
+    <string name="public_key_qr">public key qr</string>
 </resources>
