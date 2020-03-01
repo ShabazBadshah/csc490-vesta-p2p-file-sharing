@@ -14,28 +14,33 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
 
     <ImageView
         android:id="@+id/qr_image"
-        android:layout_width="280dp"
-        android:layout_height="280dp"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="50dp"
+        android:background="@drawable/qr_code_border"
         android:contentDescription="@string/public_key_qr"
+        android:cropToPadding="false"
         app:layout_constraintBottom_toTopOf="@+id/scan_qr_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
+        style="?android:attr/borderlessButtonStyle"
         android:id="@+id/scan_qr_btn"
-        android:layout_width="200dp"
-        android:layout_height="45dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:background="@drawable/btn_rounded"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/qr_image">
 
         <TextView
-            android:id="@+id/font1"
+            android:id="@+id/scan_qr_text_view"
             android:layout_width="150dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -46,13 +51,14 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
             android:gravity="center|center_horizontal"
             android:text="@string/scan_qr"
             android:textAllCaps="false"
-            android:textColor="@color/primaryBrandColour" />
+            android:textColor="@color/primaryBrandColour"
+            android:textSize="20sp" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/regenerate_key_btn"
-        android:layout_width="200dp"
-        android:layout_height="45dp"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/btn_rounded"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,8 +66,8 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
         app:layout_constraintTop_toBottomOf="@+id/scan_qr_btn">
 
         <TextView
-            android:id="@+id/font"
-            android:layout_width="150dp"
+            android:id="@+id/regernate_key_text_view"
+            android:layout_width="200dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
             android:background="@null"
@@ -71,7 +77,8 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
             android:gravity="center|center_horizontal"
             android:text="@string/regenerate_key"
             android:textAllCaps="false"
-            android:textColor="@color/primaryBrandColour" />
+            android:textColor="@color/primaryBrandColour"
+            android:textSize="20sp" />
     </FrameLayout>
 
     <ImageView
