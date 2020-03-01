@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
             qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(
                     KeyPairManager.getKeyPairFromKeystore("userKeys").getPublic()),
                     null, QRGContents.Type.TEXT, smallerDimension);
+
+            qrgEncoder.setColorWhite(getColor(R.color.primaryBrandColour));
+            qrgEncoder.setColorBlack(getColor(android.R.color.white));
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (CertificateException e) {
