@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            bitmapResult = qrgEncoder.encodeAsBitmap();
+            bitmap = qrgEncoder.getBitmap();
             qrImage.setImageBitmap(bitmap);
         } catch (Exception e) {
             Log.v("Log error", e.toString());
