@@ -32,6 +32,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private static PeerConnectionFactory peerConnectionFactory;
     private static PeerConnection localPeerConnection;
     private static PeerConnection remotePeerConnection;
+    private static DataChannel localDataChannel;
 
 
     /*
@@ -111,6 +112,29 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         //The mobile is the callee, the one getting called
         remotePeerConnection = createPeerConnection(peerConnectionFactory, false);
 
+        //creation/initialization of data channel so we can exchange data
+        localDataChannel = localPeerConnection.createDataChannel("dataChannel", new DataChannel.Init());
+
+        localDataChannel.registerObserver(new DataChannel.Observer() {
+
+            @Override
+            public void onBufferedAmountChange(long l) {
+
+            }
+
+            @Override
+            public void onStateChange() {
+
+            }
+
+            @Override
+            public void onMessage(DataChannel.Buffer buffer) {
+
+            }
+
+        });
+
+
         System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
@@ -122,6 +146,13 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         mScannerView.resumeCameraPreview(this);
     }
 
+    /**
+     *
+     * Reference https://github.com/IhorKlimov/Android-WebRtc/blob/dec8ab27ff9525150af80ba7054aa19dfdd8c065/app/src/main/java/com/myhexaville/androidwebrtc/tutorial/DataChannelActivity.java?fbclid=IwAR3My1RT0w_LunhYg4fiCBgFY2_RssjoitGk6mA5dZHiSFHaOUX70cbQQDg
+     * @param factory
+     * @param isLocal
+     * @return
+     */
     public static PeerConnection createPeerConnection(PeerConnectionFactory factory,
                     boolean isLocal) {
         //the local peer
