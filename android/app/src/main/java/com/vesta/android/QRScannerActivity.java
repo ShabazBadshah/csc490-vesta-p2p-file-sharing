@@ -1,7 +1,6 @@
 package com.vesta.android;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,10 +9,18 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import java.security.Key;
 
 import com.google.zxing.Result;
-import com.google.zxing.MultiFormatReader;
+
+import org.webrtc.DataChannel;
+import org.webrtc.IceCandidate;
+import org.webrtc.MediaConstraints;
+import org.webrtc.MediaStream;
+import org.webrtc.PeerConnection;
+import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RtpReceiver;
+
+import java.util.ArrayList;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -22,6 +29,10 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private ZXingScannerView mScannerView;
     private final int MY_CAMERA_REQUEST_CODE = 1888;
     private static final String TAG = "ScannerActivity";
+    private static PeerConnectionFactory peerConnectionFactory;
+    private static PeerConnection localPeerConnection;
+    private static PeerConnection remotePeerConnection;
+
 
     /*
     * The name of our shared preferences
@@ -79,6 +90,27 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
 
+
+        /**
+         * WebRTC code here
+         * The callee is the android side of the connection
+         * Check to see if the result from the QR code is from the desktop
+         */
+
+        //if (rawResult.getText()) //parse the string and check if its from the desktop
+
+        PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
+        PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
+        peerConnectionFactory = new PeerConnectionFactory(options);
+
+        //PeerConnection localPeerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
+
+        //The desktop is the local peer, the caller
+        localPeerConnection = createPeerConnection(peerConnectionFactory, true);
+
+        //The mobile is the callee, the one getting called
+        remotePeerConnection = createPeerConnection(peerConnectionFactory, false);
+
         System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
@@ -90,4 +122,91 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         mScannerView.resumeCameraPreview(this);
     }
 
+    public static PeerConnection createPeerConnection(PeerConnectionFactory factory,
+                    boolean isLocal) {
+        //the local peer
+        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(new ArrayList<PeerConnection.IceServer>());
+        MediaConstraints pcConstraints = new MediaConstraints();
+        PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
+            @Override
+            public void onAddTrack(RtpReceiver rtpReceiver, MediaStream[] mediaStreams) {
+
+            }
+
+            @Override
+            public void onSignalingChange(PeerConnection.SignalingState signalingState) {
+                Log.d(TAG, "onSignalingChange: ");
+            }
+
+            @Override
+            public void onIceConnectionChange(PeerConnection.IceConnectionState iceConnectionState) {
+                Log.d(TAG, "onIceConnectionChange: ");
+            }
+
+            @Override
+            public void onIceConnectionReceivingChange(boolean b) {
+                //                Log.d(TAG, "onIceConnectionReceivingChange: ");
+            }
+
+            @Override
+            public void onIceGatheringChange(PeerConnection.IceGatheringState iceGatheringState) {
+                Log.d(TAG, "onIceGatheringChange: ");
+            }
+
+            @Override
+            public void onIceCandidate(IceCandidate iceCandidate) {
+
+                //                Log.d(TAG, "onIceCandidate: " + isLocal);
+                //                if (isLocal) {
+                //                    remotePeerConnection.addIceCandidate(iceCandidate);
+                //                } else {
+                //                    localPeerConnection.addIceCandidate(iceCandidate);
+                //
+
+            }
+
+            @Override
+            public void onIceCandidatesRemoved(IceCandidate[] iceCandidates) {
+                Log.d(TAG, "onIceCandidatesRemoved: ");
+            }
+
+            @Override
+            public void onAddStream(MediaStream mediaStream) {
+                Log.d(TAG, "onAddStream: ");
+            }
+
+            @Override
+            public void onRemoveStream(MediaStream mediaStream) {
+                Log.d(TAG, "onRemoveStream: ");
+            }
+
+            @Override
+            public void onDataChannel(final DataChannel dataChannel) {
+                Log.d(TAG, "onDataChannel: is local:  , state: " + dataChannel.state());
+                dataChannel.registerObserver(new DataChannel.Observer() {
+                    @Override
+                    public void onBufferedAmountChange(long l) {
+
+                    }
+
+                    @Override
+                    public void onStateChange() {
+                        Log.d(TAG, "onStateChange: remote data channel state: " + dataChannel.state().toString());
+                    }
+
+                    @Override
+                    public void onMessage(DataChannel.Buffer buffer) {
+                        Log.d(TAG, "onMessage: got message");
+                    }
+                });
+            }
+
+            @Override
+            public void onRenegotiationNeeded() {
+                Log.d(TAG, "onRenegotiationNeeded: ");
+            }
+        };
+        return peerConnectionFactory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
+
+    }
 }
