@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
+//import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
 
 import com.google.zxing.Result;
 
@@ -22,20 +22,6 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
-
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-
-import org.webrtc.DataChannel;
-import org.webrtc.IceCandidate;
-import org.webrtc.MediaConstraints;
-import org.webrtc.MediaStream;
-import org.webrtc.PeerConnection;
-import org.webrtc.PeerConnectionFactory;
-import org.webrtc.RtpReceiver;
-import org.webrtc.SdpObserver;
-import org.webrtc.SessionDescription;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
@@ -56,7 +42,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private static PeerConnection localPeerConnection;
     private static PeerConnection remotePeerConnection;
     private static DataChannel localDataChannel;
-    private ActivitySampleDataChannelBinding binding;
+    //private ActivitySampleDataChannelBinding binding;
 
 
 
@@ -229,7 +215,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
         peerConnectionFactory = new PeerConnectionFactory(options);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+       // binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         //PeerConnection localPeerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
 
@@ -240,7 +226,13 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         remotePeerConnection = createPeerConnection(peerConnectionFactory, false);
 
         //creation/initialization of data channel so we can exchange data
-        localDataChannel = localPeerConnection.createDataChannel("dataChannel", new DataChannel.Init());
+        DataChannel.Init initDC = new DataChannel.Init();
+
+        //set the attributes for our data channel
+        initDC.id = 1;
+        initDC.protocol = "udp";
+
+        localDataChannel = localPeerConnection.createDataChannel("dataChannel", initDC);
 
         localDataChannel.registerObserver(new DataChannel.Observer() {
 
@@ -252,19 +244,28 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             @Override
             public void onStateChange() {
                 Log.d(TAG, "onStateChange: " + localDataChannel.state().toString());
-                runOnUiThread(() -> {
-                    if (localDataChannel.state() == DataChannel.State.OPEN) {
-                        binding.sendButton.setEnabled(true);
-                    } else {
-                        binding.sendButton.setEnabled(false);
-                    }
-                });
+
+
+               // runOnUiThread(() -> {
+
+                    //if (localDataChannel.state() == DataChannel.State.OPEN) {
+                      //  binding.sendButton.setEnabled(true);
+                    //} else {
+                      //  binding.sendButton.setEnabled(false);
+                    //}
+                //});
 
             }
 
+            /**
+             * Where we are notified that the messaged is recieved
+             * Turn the buffer into a string to get where it is sent from
+             * @param buffer
+             */
             @Override
-            public void onMessage(DataChannel.Buffer buffer) {
-
+            public void onMessage(final DataChannel.Buffer buffer) {
+                byte[] bytes  = buffer.data.array();
+                String stringMsg = new String( bytes, StandardCharsets.UTF_8 );
             }
 
         });
@@ -376,7 +377,19 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
     }
 
-    public void sendMessage(View view) {
+    /**
+     * Responsible for sending the msg through the data channel
+     * @param msg
+     */
+    public void sendMessage (final String msg) {
+
+        //convert msg to byte buffer
+        byte[] bytes = msg.getBytes(Charsets.UTF_8);
+
+        //send the buffer from the local data channel
+        localDataChannel.send(new DataChannel.Buffer(ByteBuffer.wrap(bytes), false));
+
+    }    /*public void sendMessage(View view) {
         String message = binding.textInput.getText().toString();
         if (message.isEmpty()) {
             return;
@@ -386,7 +399,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
         ByteBuffer data = stringToByteBuffer("-s" + message, Charset.defaultCharset());
         localDataChannel.send(new DataChannel.Buffer(data, false));
-    }
+    }*/
 
     private static ByteBuffer stringToByteBuffer(String msg, Charset charset) {
         return ByteBuffer.wrap(msg.getBytes(charset));
