@@ -6,12 +6,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
 
 import com.google.zxing.Result;
 
@@ -23,6 +23,8 @@ import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.webrtc.DataChannel;
@@ -54,6 +56,8 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private static PeerConnection localPeerConnection;
     private static PeerConnection remotePeerConnection;
     private static DataChannel localDataChannel;
+    private ActivitySampleDataChannelBinding binding;
+
 
 
     /*
@@ -225,6 +229,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
         peerConnectionFactory = new PeerConnectionFactory(options);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         //PeerConnection localPeerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
 
@@ -246,6 +251,14 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
             @Override
             public void onStateChange() {
+                Log.d(TAG, "onStateChange: " + localDataChannel.state().toString());
+                runOnUiThread(() -> {
+                    if (localDataChannel.state() == DataChannel.State.OPEN) {
+                        binding.sendButton.setEnabled(true);
+                    } else {
+                        binding.sendButton.setEnabled(false);
+                    }
+                });
 
             }
 
@@ -361,5 +374,21 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         };
         return peerConnectionFactory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
 
+    }
+
+    public void sendMessage(View view) {
+        String message = binding.textInput.getText().toString();
+        if (message.isEmpty()) {
+            return;
+        }
+
+        binding.textInput.setText("");
+
+        ByteBuffer data = stringToByteBuffer("-s" + message, Charset.defaultCharset());
+        localDataChannel.send(new DataChannel.Buffer(data, false));
+    }
+
+    private static ByteBuffer stringToByteBuffer(String msg, Charset charset) {
+        return ByteBuffer.wrap(msg.getBytes(charset));
     }
 }
