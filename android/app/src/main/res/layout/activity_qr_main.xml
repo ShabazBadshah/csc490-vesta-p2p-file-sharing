@@ -13,7 +13,7 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
     android:background="@color/primaryBrandColour">
 
     <ImageView
-        android:id="@+id/qr_image"
+        android:id="@+id/publicKeyQrImgView"
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_marginTop="40dp"
@@ -21,26 +21,27 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
         android:background="@drawable/qr_code_border"
         android:contentDescription="@string/public_key_qr"
         android:cropToPadding="false"
-        app:layout_constraintBottom_toTopOf="@+id/scan_qr_btn"
+        app:layout_constraintBottom_toTopOf="@+id/scanQrBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         style="?android:attr/borderlessButtonStyle"
-        android:id="@+id/scan_qr_btn"
+        android:id="@+id/scanQrBtn"
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:background="@drawable/btn_rounded"
         android:clickable="true"
         android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/qr_image">
+        app:layout_constraintTop_toTopOf="@+id/publicKeyQrImgView">
 
         <TextView
-            android:id="@+id/scan_qr_text_view"
+            android:id="@+id/scanQrTxtView"
             android:layout_width="150dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -56,17 +57,21 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
     </FrameLayout>
 
     <FrameLayout
-        android:id="@+id/regenerate_key_btn"
+        android:id="@+id/regenerateKeyBtn"
+        android:onClick="onRegenerateKeyBtnClick"
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_marginTop="30dp"
         android:background="@drawable/btn_rounded"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scan_qr_btn">
+        app:layout_constraintTop_toBottomOf="@+id/scanQrBtn"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless">
 
         <TextView
-            android:id="@+id/regernate_key_text_view"
+            android:id="@+id/regenerateKeyTxtView"
             android:layout_width="200dp"
             android:layout_height="45dp"
             android:layout_gravity="center"
@@ -82,7 +87,7 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
     </FrameLayout>
 
     <ImageView
-        android:id="@+id/vesta_logo"
+        android:id="@+id/vestaLogoImgView"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginEnd="10dp"
@@ -90,12 +95,12 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
         android:contentDescription="@string/vesta_logo"
         android:src="@drawable/ic_app_logo_"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/vesta_app_name"
+        app:layout_constraintEnd_toStartOf="@+id/vestaAppNameTxtView"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/vesta_app_name"
+        android:id="@+id/vestaAppNameTxtView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="60dp"
