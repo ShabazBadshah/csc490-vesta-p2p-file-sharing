@@ -22,6 +22,8 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
+import org.webrtc.SdpObserver;
+import org.webrtc.SessionDescription;
 
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executor;
@@ -140,6 +142,34 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         initDC.id = 1;
         initDC.protocol = "udp";
 
+
+
+        //TODO: work on creating offer, setting remote and local desc etc, understand process
+        localPeerConnection.createOffer(new SdpObserver() {
+            @Override
+            public void onCreateSuccess(SessionDescription sessionDescription) {
+
+            }
+
+            @Override
+            public void onSetSuccess() {
+
+            }
+
+            @Override
+            public void onCreateFailure(String s) {
+
+            }
+
+            @Override
+            public void onSetFailure(String s) {
+
+            }
+        }, new MediaConstraints());
+
+
+
+        //init of localDataChannel
         localDataChannel = localPeerConnection.createDataChannel("dataChannel", initDC);
 
         localDataChannel.registerObserver(new DataChannel.Observer() {
@@ -230,6 +260,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
+
 
                 //                Log.d(TAG, "onIceCandidate: " + isLocal);
                 //                if (isLocal) {
