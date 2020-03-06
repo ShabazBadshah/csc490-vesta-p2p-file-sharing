@@ -134,31 +134,33 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         initDC.id = 1;
         initDC.protocol = "udp";
 
-
-
         //TODO: work on creating offer, setting remote and local desc etc, understand process
-        localPeerConnection.createOffer(new SdpObserver() {
+        // Establishes the connection between the two peers
+        localPeerConnection.createOffer(new CustomSdpObserver() {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
 
-            }
+                Log.i("SessionDescription", sessionDescription.toString());
 
-            @Override
-            public void onSetSuccess() {
+                //setting of remote and local description happens here
+                //send a description to the other client for establishing connection
+                localPeerConnection.setLocalDescription(new CustomSdpObserver(), sessionDescription);
+                remotePeerConnection.setRemoteDescription(new CustomSdpObserver(), sessionDescription);
 
-            }
+                //remote peer will answer back to the caller
+                remotePeerConnection.createAnswer(new CustomSdpObserver() {
 
-            @Override
-            public void onCreateFailure(String s) {
+                    //reply back here
+                    @Override
+                    public void onCreateSuccess(SessionDescription sessionDescription) {
 
-            }
+                        localPeerConnection.setRemoteDescription(new CustomSdpObserver(), sessionDescription);
+                        remotePeerConnection.setLocalDescription(new CustomSdpObserver(), sessionDescription);
+                    }
 
-            @Override
-            public void onSetFailure(String s) {
-
+                }, new MediaConstraints());
             }
         }, new MediaConstraints());
-
 
 
         //init of localDataChannel
@@ -199,7 +201,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             }
 
         });
-
 
         System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
