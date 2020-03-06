@@ -14,10 +14,14 @@ import {
   ButtonToolbar,
   FormInput,
   InputGroup,
+  Nav,
+  NavItem,
+  NavLink,
   Collapse
 } from "shards-react";
 import QrGenerator from './components/qrGenerator';
 import Navigation from './components/navigation';
+import Menu from './components/menu';
 
 function App() {
 
@@ -25,28 +29,16 @@ function App() {
 
     <div>
 
-    <img src={background} style={{
-        position: "fixed",
-        top: "0",
-        width: "100%",
-        height: "100%",
-    }}/>
+      <p style={{color: "#905EAF", position: "absolute", left: "90px", top: "10px", fontSize: "72px"}}> Vesta </p>
+      <p style={{color: "#black", position: "absolute", left: "100px", top: "105px", fontSize: "18px"}}> Secure file sharing in your control  </p>
 
     <Navigation> </Navigation>
 
-    <Card style={{maxWidth: "300px", position: "absolute", top:"8px", right:"16px"}}>
-    <CardBody>
-    <ButtonToolbar>
-      <Button outline squared size="sm" theme="dark"> Privacy </Button>
-      <Button outline squared size="sm" theme="dark"> Help </Button>
-      <Button outline squared size="sm" theme="dark"> Contact </Button>
-    </ButtonToolbar>
-    </CardBody>
-    </Card>
-
-    <div style={{position: "absolute", top: "8px", left: "16px", fontSize: "48px", color: "black"}}> Vesta < /div>
+    <Menu> </Menu>
 
     </div>
+
+
   );
 }
 
