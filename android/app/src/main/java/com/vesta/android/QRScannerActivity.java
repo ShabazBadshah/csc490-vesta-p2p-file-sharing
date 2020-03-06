@@ -44,6 +44,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private static PeerConnection localPeerConnection;
     private static PeerConnection remotePeerConnection;
     private static DataChannel localDataChannel;
+    private static  PeerConnection.Observer pcObserver;
     //private ActivitySampleDataChannelBinding binding;
 
 
@@ -223,7 +224,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         //the local peer
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(new ArrayList<PeerConnection.IceServer>());
         MediaConstraints pcConstraints = new MediaConstraints();
-        PeerConnection.Observer pcObserver = new PeerConnection.Observer() {
+        pcObserver = new PeerConnection.Observer() {
             @Override
             public void onAddTrack(RtpReceiver rtpReceiver, MediaStream[] mediaStreams) {
 
