@@ -197,7 +197,8 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             @Override
             public void onMessage(final DataChannel.Buffer buffer) {
                 byte[] bytes  = buffer.data.array();
-                String stringMsg = new String( bytes, StandardCharsets.UTF_8 );
+                String stringMsg = new String( bytes, StandardCharsets.UTF_8);
+                Log.i("stringMsg", stringMsg);
             }
 
         });
