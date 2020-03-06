@@ -88,7 +88,7 @@ public class KeyPairManager {
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                .setKeySize(1024)
+                .setKeySize(512)
                 .build());
 
         return kpGenerator.generateKeyPair();
