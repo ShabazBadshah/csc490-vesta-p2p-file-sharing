@@ -4,10 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -17,16 +15,15 @@ import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGContents;
 
 import java.security.InvalidAlgorithmParameterException;
-import java.security.Key;
-import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.PublicKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.vesta.android.model.KeyPairManager;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -43,9 +40,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
 
         keyPairManager = (KeyPairManager) getIntent().getSerializableExtra("KeyPairManager");
 

@@ -5,12 +5,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.zxing.Result;
+import com.vesta.android.model.KeyPairManager;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -82,7 +82,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 //        setContentView(R.layout.activity_main);
 
 //        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
-        publicKeyTextView.setText(rawResult.getText());
+//        publicKeyTextView.setText(rawResult.getText());
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }
