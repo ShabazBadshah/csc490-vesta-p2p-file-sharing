@@ -1,11 +1,13 @@
 package com.vesta.android;
 
 import android.Manifest;
+import android.content.SyncStatusObserver;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
 
@@ -99,20 +101,16 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     @Override
     public void handleResult(Result rawResult) {
 
-        //Storing the rawResult which is the public key in shared preferences with the
-        // unique identifier of the device
-        String androidID = Secure.getString(this.getBaseContext().getContentResolver(),
-                Secure.ANDROID_ID);
+        System.out.println("HERE IS THE RAW RESULT " + rawResult.getText());
+        //if (rawResult.getText()) //parse the string and check if its from the desktop
 
-
-        //Only call store shared pref if key does not exist already
-        if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
-            KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                    rawResult.getText());
-        }
-        Log.i("Retrieve shared pref",
-                KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));
-
+        //TODO: Commented out for now for testing purposes, to test if web rtc connection
+        // is established
+        //Storing the rawResult which is the public key in shared preferences
+       // KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+         //       rawResult.getText());
+       // Log.i("Retrieve shared pref",
+     //           KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
 
 
         /**
@@ -120,8 +118,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
          * The callee is the android side of the connection
          * Check to see if the result from the QR code is from the desktop
          */
-
-        //if (rawResult.getText()) //parse the string and check if its from the desktop
 
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
