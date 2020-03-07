@@ -115,6 +115,7 @@ public class KeyPairManager {
         //Convert the string public key to public key object
         try {
              publicKeyObject = KeyPairManager.convertBase64StringToPublicKey(publicKey);
+            System.out.println("PUBLIC KEY OBJECTTTT " + publicKeyObject);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
@@ -124,7 +125,7 @@ public class KeyPairManager {
         mPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
         mEditor = mPreferences.edit();
 
-        Log.i("PublicKeyObject", publicKeyObject.toString());
+        Log.i("PublicKeyObjectString", publicKeyObject.toString());
 
         //Storing the object representation, used toString() to bypass error
         mEditor.putString(PUBLIC_KEY, publicKeyObject.toString());
