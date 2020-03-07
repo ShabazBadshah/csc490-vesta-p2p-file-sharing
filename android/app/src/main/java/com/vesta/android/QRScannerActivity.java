@@ -76,12 +76,12 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));
 
-        System.out.println(((TextView)findViewById(R.id.textView)));
+//        System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
 
-        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
+//        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
         publicKeyTextView.setText(rawResult.getText());
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);

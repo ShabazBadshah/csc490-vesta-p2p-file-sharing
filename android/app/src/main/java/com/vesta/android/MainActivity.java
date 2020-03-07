@@ -1,43 +1,33 @@
 package com.vesta.android;
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import java.io.IOException;
 
 import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGContents;
+
 import java.security.InvalidAlgorithmParameterException;
+import java.security.Key;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PublicKey;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-
-import android.content.Intent;
-import android.graphics.Point;
-import android.view.Display;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,91 +36,70 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private QRGEncoder qrgEncoder;
     private Bitmap bitmapResult;
-    private KeyPair pair;
+    private FrameLayout regenerateKeyBtn;
+    private FrameLayout scanQrBtn;
+    private KeyPairManager keyPairManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        // Prevents users from taking a screenshot of the app
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
 
-        String alias = "alias";
+        keyPairManager = (KeyPairManager) getIntent().getSerializableExtra("KeyPairManager");
 
-        KeyPairManager kp = new KeyPairManager(getApplicationContext());
+        setContentView(R.layout.activity_qr_main);
+
+        qrImage = findViewById(R.id.publicKeyQrImgView);
+        regenerateKeyBtn = findViewById(R.id.regenerateKeyBtn);
+        scanQrBtn = findViewById(R.id.scanQrBtn);
+
+        generateQr();
+
+    }
+
+    public void generateQr() {
+        Point point = new Point();
+        ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getSize(point);
+        int width = point.x;
+        int height = point.y;
+        int smallerDimension = width < height ? width : height;
+
         try {
-            pair = kp.generateRsaEncryptionKeyPair(alias);
-            String encryptedtext = KeyPairManager.encrypt(alias, "Hello World");
-            Log.i("ENCRYPTED", encryptedtext);
-            Log.i("DECRYPTED", kp.decrypt(alias, encryptedtext));
+            KeyPairManager keyPairManager = new KeyPairManager(getApplicationContext());
+            keyPairManager.generateRsaEncryptionKeyPair("userKeys");
+            qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(
+                    KeyPairManager.getKeyPairFromKeystore("userKeys").getPublic()),
+                    QRGContents.Type.TEXT, smallerDimension);
+
+            qrgEncoder.setColorWhite(getColor(R.color.primaryBrandColour));
+            qrgEncoder.setColorBlack(getColor(android.R.color.white));
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
         } catch (CertificateException e) {
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchProviderException e) {
             e.printStackTrace();
         } catch (UnrecoverableEntryException e) {
             e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
+        } catch (NoSuchProviderException e) {
             e.printStackTrace();
         }
 
-        final Button qr_button = (Button)findViewById(R.id.qrbutton);
-        qrImage = findViewById(R.id.qr_image);
-        final Button scanQRButton = (Button)findViewById(R.id.scanQR);
-        qrImage = findViewById(R.id.qr_image);
+        try {
+            bitmap = qrgEncoder.getBitmap();
+            qrImage.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            Log.v("Log error", e.toString());
+        }
+    }
 
-        scanQRButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), QRScannerActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        qr_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //calculating bitmap dimension
-                WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
-                Display display = manager.getDefaultDisplay();
-                Point point = new Point();
-                display.getSize(point);
-                int width = point.x;
-                int height = point.y;
-                int smallerDimension = width < height ? width : height;
-                smallerDimension = smallerDimension * 3 / 4;
-
-
-                qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()),
-                        null, QRGContents.Type.TEXT, smallerDimension);
-
-                Log.i("OriginalPubKeyObject", pair.getPublic().toString());
-                Log.i("StringPublicKey", KeyPairManager.convertRsaKeyToBase64String(pair.getPublic()));
-
-                final TextView tView = findViewById(R.id.textView);
-
-                try {
-                    bitmapResult = qrgEncoder.encodeAsBitmap();
-                    qrImage.setImageBitmap(bitmapResult);
-                } catch (Exception e) {
-                    Log.v("Log error", e.toString());
-                }
-            }
-        });
+    public void onRegenerateKeyBtnClick(View view) {
+        generateQr();
     }
 }
