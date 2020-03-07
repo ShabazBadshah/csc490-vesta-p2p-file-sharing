@@ -1,11 +1,13 @@
 package com.vesta.android;
 
 import android.Manifest;
+import android.content.SyncStatusObserver;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.TextView;
 
@@ -116,104 +118,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
          * The callee is the android side of the connection
          * Check to see if the result from the QR code is from the desktop
          */
-
-        PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
-        PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
-        peerConnectionFactory = new PeerConnectionFactory(options);
-       // binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-
-        //PeerConnection localPeerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
-
-        //The desktop is the local peer, the caller
-        localPeerConnection = createPeerConnection(peerConnectionFactory, true);
-
-        //The mobile is the callee, the one getting called
-        remotePeerConnection = createPeerConnection(peerConnectionFactory, false);
-
-        //creation/initialization of data channel so we can exchange data
-        DataChannel.Init initDC = new DataChannel.Init();
-
-        //set the attributes for our data channel
-        initDC.id = 1;
-        initDC.protocol = "udp";
-
-        //TODO: work on creating offer, setting remote and local desc etc, understand process
-        // Establishes the connection between the two peers
-        localPeerConnection.createOffer(new CustomSdpObserver() {
-            @Override
-            public void onCreateSuccess(SessionDescription sessionDescription) {
-
-                Log.i("SessionDescription", sessionDescription.toString());
-
-                //setting of remote and local description happens here
-                //send a description to the other client for establishing connection
-                localPeerConnection.setLocalDescription(new CustomSdpObserver(), sessionDescription);
-                remotePeerConnection.setRemoteDescription(new CustomSdpObserver(), sessionDescription);
-
-                //remote peer will answer back to the caller
-                remotePeerConnection.createAnswer(new CustomSdpObserver() {
-
-                    //reply back here
-                    @Override
-                    public void onCreateSuccess(SessionDescription sessionDescription) {
-
-                        localPeerConnection.setRemoteDescription(new CustomSdpObserver(), sessionDescription);
-                        remotePeerConnection.setLocalDescription(new CustomSdpObserver(), sessionDescription);
-                    }
-
-                }, new MediaConstraints());
-            }
-        }, new MediaConstraints());
-
-
-        //init of localDataChannel
-        localDataChannel = localPeerConnection.createDataChannel("dataChannel", initDC);
-
-        localDataChannel.registerObserver(new DataChannel.Observer() {
-
-            @Override
-            public void onBufferedAmountChange(long l) {
-
-            }
-
-            @Override
-            public void onStateChange() {
-                Log.d(TAG, "onStateChange: " + localDataChannel.state().toString());
-
-
-               // runOnUiThread(() -> {
-
-                    //if (localDataChannel.state() == DataChannel.State.OPEN) {
-                      //  binding.sendButton.setEnabled(true);
-                    //} else {
-                      //  binding.sendButton.setEnabled(false);
-                    //}
-                //});
-
-            }
-
-            /**
-             * Where we are notified that the messaged is recieved
-             * Turn the buffer into a string to get where it is sent from
-             * @param buffer
-             */
-            @Override
-            public void onMessage(final DataChannel.Buffer buffer) {
-                byte[] bytes  = buffer.data.array();
-                String stringMsg = new String( bytes, StandardCharsets.UTF_8);
-                Log.i("stringMsg", stringMsg);
-            }
-
-        });
-
-
-        /**
-         * WebRTC code here
-         * The callee is the android side of the connection
-         * Check to see if the result from the QR code is from the desktop
-         */
-
-        //if (rawResult.getText()) //parse the string and check if its from the desktop
 
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
