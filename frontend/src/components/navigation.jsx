@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import {
   Card,
   CardHeader,
@@ -13,7 +12,8 @@ import {
   ButtonToolbar,
   FormInput,
   InputGroup,
-  Collapse
+  Collapse,
+  Nav, NavItem, NavLink
 } from "shards-react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css";
@@ -31,7 +31,7 @@ class Navigation extends Component {
     this.hostingClick = this.hostingClick.bind(this);
     this.receivingClick = this.receivingClick.bind(this);
     this.qrActivate = this.qrActivate.bind(this);
-    this.state = {hostingTab: false, receivingTab: false, showQR: false}
+    this.state = {hostingTab: false, receivingTab: true, showQR: false}
     this.showQR = false
     this.hostingTab = false;
     this.receivingTab = false;
@@ -43,6 +43,7 @@ class Navigation extends Component {
 
   receivingClick() {
     this.setState({hostingTab: false, receivingTab: true});
+    this.setState({showQR: false});
   }
 
   qrActivate() {
@@ -55,43 +56,52 @@ class Navigation extends Component {
     const receivingTab = this.state.receivingTab;
     const showQR = this.state.showQR;
     let cardBody;
+    let hstyle;
+    let rstyle;
 
     if (hostingTab){
       cardBody =
       <div>
-        <div>
-        <Button outline squared size="sm" theme="dark" style={{backgroundColor: "#483D8B", color: "white"}}> Select File 📄 </Button>
-        </div>
-        <div>
-        <Button outline squared size="sm" theme="dark" onClick={this.qrActivate} > Host </Button>
-        </div>
+        <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Ready to Host </Button>
       </div>
+      hstyle = {color: "#905EAF", fontWeight: "bold", width: "210px", textDecoration: "underline"}
+      rstyle= {color: "grey", fontWeight: "bold", width: "210px"}
     }
 
     else if (receivingTab){
-      cardBody = <div> <FormInput size="sm" placeholder="Enter Link" className="mb-2" style={{width: "165px", borderColor: "#483D8B"}}/>
-      <Button outline squared size="sm" theme="dark"> Go </Button>
-
+      cardBody = <div> <FormInput placeholder="Enter Link" className="mb-2" style={{width: "360px", borderColor: "#905EAF"}}/>
+      <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Go </Button>
       </div>
+      hstyle = {color: "grey", fontWeight: "bold", width: "210px"}
+      rstyle = {color: "#905EAF", fontWeight: "bold", width: "210px", textDecoration: "underline"}
     }
 
     else{
       cardBody =  <div> </div>
+      hstyle = {color: "grey", fontWeight: "bold", width: "210px"}
+      rstyle = {color: "grey", fontWeight: "bold", width: "210px"}
     }
 
     if (showQR){
       return (
         <div className="App">
           <header className="App-header">
-          <Card style={{maxWidth: "300px", position: "absolute", left:"80px", top:"120px"}}>
+          <Card style={{position: "absolute", left:"80px", top:"120px"}}>
+          <Nav tabs>
+             <NavItem>
+               <NavLink disactive href="#" onClick={this.hostingClick} style={hstyle}>
+                 Hosting
+               </NavLink>
+             </NavItem>
+             <NavItem>
+               <NavLink active href="#" onClick={this.receivingClick} style={rstyle}>
+                 Recieve
+               </NavLink>
+             </NavItem>
+           </Nav>
             <CardBody>
-            <ButtonToolbar>
-              <Button outline squared size="sm" theme="dark"> Hosting </Button>
-              <Button outline squared size="sm" theme="dark"> Receiving </Button>
-            </ButtonToolbar>
-              <text style={{color: "black", fontSize: "12px"}}> Share Link: </text> <p style={{color: "black", fontSize: "12px"}}> <a style={{color: "black", fontSize: "12px"}} href="www.google.com"/> www.google.com </p>
+              &nbsp;
               <QrGenerator> </QrGenerator>
-              <Button outline squared size="sm" theme="dark" style={{backgroundColor: "#483D8B", color: "white"}}> Quit </Button>
             </CardBody>
           </Card>
           </header>
@@ -104,12 +114,20 @@ class Navigation extends Component {
       return (
         <div className="App">
           <header className="App-header">
-          <Card style={{maxWidth: "300px", position: "absolute", left:"80px", top:"120px"}}>
+          <Card style={{position: "absolute", left:"80px", top:"150px"}}>
+          <Nav tabs>
+             <NavItem>
+               <NavLink disactive href="#" onClick={this.hostingClick} style={hstyle}>
+                 Hosting
+               </NavLink>
+             </NavItem>
+             <NavItem>
+               <NavLink active href="#" onClick={this.receivingClick}  style={rstyle}>
+                 Recieve
+               </NavLink>
+             </NavItem>
+           </Nav>
             <CardBody>
-            <ButtonToolbar>
-              <Button outline squared size="sm" theme="dark" onClick={this.hostingClick}> Hosting </Button>
-              <Button outline squared size="sm" theme="dark" onClick={this.receivingClick}> Receiving </Button>
-            </ButtonToolbar>
               &nbsp;
               {cardBody}
             </CardBody>
