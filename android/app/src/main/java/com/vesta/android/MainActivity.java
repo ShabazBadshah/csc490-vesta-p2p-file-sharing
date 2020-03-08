@@ -1,5 +1,6 @@
 package com.vesta.android;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import java.security.cert.CertificateException;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.vesta.android.implementation.view_impl.SplashScreenActivity;
 import com.vesta.android.model.KeyPairManager;
 
 
@@ -41,16 +43,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        keyPairManager = (KeyPairManager) getIntent().getSerializableExtra("KeyPairManager");
-
-        setContentView(R.layout.activity_qr_main);
+        setContentView(R.layout.activity_main);
 
         qrImage = findViewById(R.id.publicKeyQrImgView);
         regenerateKeyBtn = findViewById(R.id.regenerateKeyBtn);
+
         scanQrBtn = findViewById(R.id.scanQrBtn);
 
         generateQr();
-
     }
 
     public void generateQr() {
@@ -95,5 +95,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void onRegenerateKeyBtnClick(View view) {
         generateQr();
+    }
+
+    public void onLaunchQrActivity(View view) {
+        Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
+        startActivity(intent);
     }
 }

@@ -29,6 +29,7 @@ http://porcupineprogrammer.blogspot.com/2013/03/android-ui-struggles-making-butt
     <FrameLayout
         style="?android:attr/borderlessButtonStyle"
         android:id="@+id/scanQrBtn"
+        android:onClick="onLaunchQrActivity"
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:background="@drawable/btn_rounded"
