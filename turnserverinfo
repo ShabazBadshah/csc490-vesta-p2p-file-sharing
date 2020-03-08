@@ -8,7 +8,7 @@ Issue: Server does not repond when pinging it
 
 How to run the turnserver:
 
-In the csc490-vesta-p2p-file-sharing directory run the following command in the terminal->turnserver
+In the csc490-vesta-p2p-file-sharing directory run the following command in the terminal-> sudo turnserver
 
 What might be the problem:
 
