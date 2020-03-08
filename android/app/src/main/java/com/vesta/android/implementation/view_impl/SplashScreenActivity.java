@@ -22,7 +22,7 @@ import java.security.cert.CertificateException;
 
 public class SplashScreenActivity extends AppCompatActivity implements SplashScreenViewInt {
 
-    public static final int SPLASH_SCREEN_DELAY_MILLIS = 100;
+    public static final int SPLASH_SCREEN_DELAY_MILLIS = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
