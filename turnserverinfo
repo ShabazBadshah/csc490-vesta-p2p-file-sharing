@@ -1,0 +1,16 @@
+Information about the turnserver:
+
+Issue: Server does not repond when pinging it
+
+1. Our turnserver URL -> turn:138.51.151.25:3478
+2. Refer to this source -> https://meetrix.io/blog/webrtc/coturn/installation.html 
+3. Also -> https://webrtc.github.io/samples/src/content/peerconnection/trickle-ice/ for testing if there is no error given by the server. Currently return error code=701, request timeout
+
+How to run the turnserver:
+
+In the csc490-vesta-p2p-file-sharing directory run the following command in the terminal->turnserver
+
+What might be the problem:
+
+From step 2., the URL states the following at the beginning of the page:
+"First Make sure that you have opened up following ports in your firewall. You can always change the ports you want to use for the setup. port 3478:UDP and 10000-20000:UDP 
