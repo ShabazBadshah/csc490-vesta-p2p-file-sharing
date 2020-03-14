@@ -37,16 +37,19 @@ import ReceivePage from "./pages/receive";
 
 class App extends Component {
   render() {
-    return (
-      <Router>
-        <Switch>
-          <Route exact path="/" component={MainPage} />
-          <Route exact path="/Host" component={HostPage} />
-          <Route path="/Receive" component={ReceivePage} />
-          <Route exact path="/404" component={ErrorPage} />
-          <Redirect to="/404" />
-        </Switch>
-      </Router>
+
+  return (
+
+    <Router>
+      <Switch>
+        <Route exact path="/" component={MainPage} />
+        <Route exact path="/Host" component={HostPage} />
+        <Route path="/Receive" component={ReceivePage} />
+        <Route exact path="/404" component={ErrorPage} />
+      <Redirect to="/404"/>
+      </Switch>
+    </Router>
+
     );
   }
 }
