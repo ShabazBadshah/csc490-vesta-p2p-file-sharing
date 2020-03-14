@@ -1,12 +1,16 @@
 package com.vesta.android.implementation.view_impl;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 
 import com.vesta.android.MainActivity;
 import com.vesta.android.R;
@@ -21,11 +25,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+import java.util.concurrent.Executor;
 
 public class SplashScreenActivity extends AppCompatActivity implements SplashScreenViewInt {
 
     public static final int SPLASH_SCREEN_DELAY_MILLIS = 3000;
     public static final int CLOSE_APP_DELAY_MILLIS = 5000;
+
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,26 +43,60 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
         setContentView(R.layout.activity_splash_screen);
 
         if (isBiometricAuthAvailable()) {
-            generateKeyPair("userKeys");
+//            generateKeyPair("userKeys");
 
-            new Handler().postDelayed(new Runnable() {
+            executor = ContextCompat.getMainExecutor(this);
+            biometricPrompt = new BiometricPrompt(SplashScreenActivity.this,
+                    executor, new BiometricPrompt.AuthenticationCallback() {
                 @Override
-                public void run() {
+                public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                    super.onAuthenticationError(errorCode, errString);
+                    Toast.makeText(getApplicationContext(),
+                            "Authentication error: " + errString, Toast.LENGTH_SHORT)
+                            .show();
+                }
+
+                @Override
+                public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                    super.onAuthenticationSucceeded(result);
+                    Toast.makeText(getApplicationContext(), "Authentication succeeded!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
-            }, SPLASH_SCREEN_DELAY_MILLIS);
+
+                @Override
+                public void onAuthenticationFailed() {
+                    super.onAuthenticationFailed();
+                    Toast.makeText(getApplicationContext(), "Biometric authentication is not available for your device. The app will now exit.", Toast.LENGTH_SHORT).show();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            SplashScreenActivity.this.finish();
+                        }
+                    }, 7000);
+                }
+            });
+
+            promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                    .setTitle("Biometric login for my app")
+                    .setSubtitle("Log in using your biometric credential")
+                    .setNegativeButtonText("Use account password")
+                    .build();
+
+            biometricPrompt.authenticate(promptInfo);
+
+        } else {
+            Toast.makeText(this, "Biometric authentication is not available for your device. The app will now exit.", Toast.LENGTH_LONG).show();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SplashScreenActivity.this.finish();
+                }
+            }, CLOSE_APP_DELAY_MILLIS);
         }
-
-        Toast.makeText(this, "Biometric authentication is not available for your device. The app will now exit.", Toast.LENGTH_LONG).show();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                SplashScreenActivity.this.finish();
-            }
-        }, CLOSE_APP_DELAY_MILLIS);
 
     }
 
@@ -79,6 +123,7 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
         }
         return false;
     }
+
 
     /**
      * Determines if biometric authentication capabilities are available on the device (i.e. can we use the device's fingerprint scanner if it exists)
