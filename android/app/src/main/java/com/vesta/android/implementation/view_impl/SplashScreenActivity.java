@@ -1,16 +1,18 @@
 package com.vesta.android.implementation.view_impl;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricManager;
 
 import com.vesta.android.MainActivity;
 import com.vesta.android.R;
-import com.vesta.android.implementation.BaseActivity;
 import com.vesta.android.interfaces.view_int.SplashScreenViewInt;
 import com.vesta.android.model.KeyPairManager;
+import com.vesta.android.util.AppConstants;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -23,22 +25,34 @@ import java.security.cert.CertificateException;
 public class SplashScreenActivity extends AppCompatActivity implements SplashScreenViewInt {
 
     public static final int SPLASH_SCREEN_DELAY_MILLIS = 3000;
+    public static final int CLOSE_APP_DELAY_MILLIS = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        generateKeyPair("userKeys");
+        if (isBiometricAuthAvailable()) {
+            generateKeyPair("userKeys");
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }, SPLASH_SCREEN_DELAY_MILLIS);
+        }
+
+        Toast.makeText(this, "Biometric authentication is not available for your device. The app will now exit.", Toast.LENGTH_LONG).show();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent=new Intent(SplashScreenActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                SplashScreenActivity.this.finish();
             }
-        }, SPLASH_SCREEN_DELAY_MILLIS);
+        }, CLOSE_APP_DELAY_MILLIS);
 
     }
 
@@ -64,5 +78,35 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
             e.printStackTrace();
         }
         return false;
+    }
+
+    /**
+     * Determines if biometric authentication capabilities are available on the device (i.e. can we use the device's fingerprint scanner if it exists)
+     * @return boolean, True if the device has biometric capabilities. False otherwise (or if any error occurs)
+     *
+     * Resources:
+     *
+     * https://developer.android.com/training/sign-in/biometric-auth#available
+     */
+    @Override
+    public boolean isBiometricAuthAvailable() {
+        BiometricManager biometricManager = BiometricManager.from(this);
+        boolean isBiometricAuthAvailable = false;
+        switch (biometricManager.canAuthenticate()) {
+            case BiometricManager.BIOMETRIC_SUCCESS:
+                Log.d(AppConstants.APP_LOG_TAG, "App can authenticate using biometrics.");
+                isBiometricAuthAvailable = true;
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
+                Log.e(AppConstants.APP_LOG_TAG, "No biometric features available on this device.");
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE:
+                Log.e(AppConstants.APP_LOG_TAG, "Biometric features are currently unavailable.");
+                break;
+            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
+                Log.e(AppConstants.APP_LOG_TAG, "The user hasn't associated any biometric credentials with their account.");
+                break;
+        }
+        return isBiometricAuthAvailable;
     }
 }
