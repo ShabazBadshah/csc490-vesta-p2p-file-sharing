@@ -29,7 +29,11 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-import MainPage from './pages'
+
+import MainPage from './pages/main';
+import ErrorPage from './pages/404error';
+import HostPage from './pages/host';
+import ReceivePage from './pages/receive';
 
 
 class App extends Component {
@@ -38,7 +42,13 @@ class App extends Component {
   return (
 
     <Router>
-      <Route path="/" component={MainPage} />
+      <Switch>
+      <Route exact path="/" component={MainPage} />
+      <Route exact path="/Host" component={HostPage} />
+      <Route path="/Receive" component={ReceivePage} />
+      <Route exact path="/404" component={ErrorPage} />
+      <Redirect to="/404"/>
+      </Switch>
     </Router>
 
     );
