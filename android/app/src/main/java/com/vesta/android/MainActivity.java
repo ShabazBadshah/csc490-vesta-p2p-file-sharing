@@ -10,11 +10,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGContents;
+
+import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableEntryException;
@@ -77,5 +79,9 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.v("Log error", e.toString());
         }
+    }
+
+    public android.content.Context getContext() {
+        return this.getBaseContext();
     }
 }

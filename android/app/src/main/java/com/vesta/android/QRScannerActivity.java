@@ -239,6 +239,8 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
             @Override
             public void onSignalingChange(PeerConnection.SignalingState signalingState) {
+
+                //TODO: LOCAL PEER ANSWER REMOTE ANSWER
                 Log.d(TAG, "onSignalingChange: ");
             }
 
