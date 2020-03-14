@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import java.security.Key;
+import android.provider.Settings.Secure;
+
 
 import com.google.zxing.Result;
 import com.google.zxing.MultiFormatReader;
@@ -73,11 +75,21 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     @Override
     public void handleResult(Result rawResult) {
 
-        //Storing the rawResult which is the public key in shared preferences
-        KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                rawResult.getText());
+        //Storing the rawResult which is the public key in shared preferences with the
+        // unique identifier of the device
+        String androidID = Secure.getString(this.getBaseContext().getContentResolver(),
+                Secure.ANDROID_ID);
+
+
+        //Only call store shared pref if key does not exist already
+        if (!KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES,this.getBaseContext(),
+                androidID).equals(KeyPairManager.KEY_DOES_NOT_EXIST)) {
+            KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+                    rawResult.getText(), androidID);
+        }
         Log.i("Retrieve shared pref",
-                KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
+                KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+                        androidID));
 
         System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
