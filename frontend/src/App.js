@@ -34,7 +34,6 @@ function App() {
 
     <Navigation> </Navigation>
 
-    <Menu> </Menu>
 
     </div>
 

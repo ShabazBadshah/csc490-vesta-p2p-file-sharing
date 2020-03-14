@@ -16,43 +16,55 @@ import java.net.URISyntaxException;
 /**
  * Important links https://k6.io/docs/javascript-api/k6-ws/socket/socket-on-event-callback
  * https://socket.io/blog/native-socket-io-and-android/
+ *
+ *
+ * Socket.emit - Emits to the server based on the event name
+ * Socket.on - gets the data from that event name
+ *
  */
 public class SocketConnection {
 
-    private Socket mSocket;
+    private static Socket mSocket;
 
-    {
-        try {
-            //TODO: will be our nodejs server url
-            mSocket = IO.socket("SOMEURL");
 
-            //to setup callbacks
-            mSocket.on("open", new Emitter.Listener(){
+    public static void startConnection() {
+        {
+            try {
+                //TODO: will be our nodejs server url
+                mSocket = IO.socket("localhost:8080");
 
-                @Override
-                public void call(Object... args) {
-                    mSocket.emit("connected");
-                }
-            });
-            mSocket.connect();
-        } catch (URISyntaxException e) {
+                //to setup callbacks
+                //mSocket.on("open", new Emitter.Listener(){
+
+                //   @Override
+                //   public void call(Object... args) {
+                mSocket.emit("connected", "success");
+                ////   }
+                // });
+                mSocket.connect();
+            } catch (URISyntaxException e) {
+            }
         }
+
     }
-
-
     /**
      * Send string msg through the socket
      * @param msg
      */
-    private void sendMessage(final String msg) {
-        mSocket.emit("message", msg);
+    private static void sendMessage(final String msg) {
+        //mSocket.on("message", new Emitter.Listener() {
+           // @Override
+           // public void call(Object... args) {
+                mSocket.emit("message", msg);
+         //   }
+        //});
     }
 
 
     /**
      * Used to recieve msgs from other users
      */
-    private void newMessage() {
+    private static void newMessage() {
 
         mSocket.on("newMessage", new Emitter.Listener() {
             @Override
@@ -79,14 +91,14 @@ public class SocketConnection {
      * Returns the socket object
      * @return
      */
-    public Socket getmSocket() {
+    public static Socket getmSocket() {
         return mSocket;
     }
 
     /**
      * Disconnect and close the socket
      */
-    public void disconnect() {
+    public static void disconnect() {
         mSocket.disconnect();
         mSocket.close();
     }

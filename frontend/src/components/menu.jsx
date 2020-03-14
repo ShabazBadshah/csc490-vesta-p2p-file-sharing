@@ -25,7 +25,7 @@ The following component does simple navigation within the home host / recieve ui
 
 class Menu extends Component {
   //Config
-  configuration = {iceServers: [{ urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19305" ] }]};
+  /*configuration = {iceServers: [{ urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19305" ] }]};
 
   constructor(props) {
     super(props);
@@ -169,7 +169,7 @@ class Menu extends Component {
       </div>
     )
 
-    }
+    }*/
 
 }
 
