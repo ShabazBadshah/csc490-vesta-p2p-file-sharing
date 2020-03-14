@@ -1,11 +1,21 @@
-const static = require('node-static');
-const http = require('http');
-const file = new(static.Server)();
-const app = http.createServer(function (req, res) {
-  file.serve(req, res);
-}).listen(2013);
+// const static = require('node-static');
+// const http = require('http');
+// const file = new(static.Server)();
 
-const io = require('socket.io').listen(app);
+// const app = http.createServer(function (req, res) {
+//   file.serve(req, res);
+// }).listen(2013);
+// const io = require('socket.io').listen(app);
+
+var express = require('express');
+var app = express();
+
+var server = app.listen(8080, function () {
+	console.log('Example app listening on port 8080!');
+});
+
+var io = require('socket.io').listen(server);;
+io.origins('*:*');
 
 io.sockets.on('connection', (socket) => {
 
