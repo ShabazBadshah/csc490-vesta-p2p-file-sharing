@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -56,12 +57,6 @@ public class KeyPairManager {
 
     public static final String KEY_DOES_NOT_EXIST = "KeyDoesNotExist";
 
-    /*
-    * The shared preferences contains key-value pair
-    * PUBLIC_KEY constant is used as the key in shared preferences
-    * */
-    public static final String PUBLIC_KEY = "PublicKey";
-
 
     public KeyPairManager(Context context) {
         this.context = context;
@@ -109,8 +104,10 @@ public class KeyPairManager {
      * @param sharedPrefName
      * @param context, which is a subclass of context
      * @param publicKey
+     * @param androidId, unique device identifier
      */
-    public static void storePublicKeySharedPref(String sharedPrefName, Context context, String publicKey) {
+    public static void storePublicKeySharedPref(String sharedPrefName, Context context,
+                                                String publicKey, final String androidId) {
 
         //Convert the string public key to public key object
         try {
@@ -128,9 +125,11 @@ public class KeyPairManager {
         Log.i("PublicKeyObjectString", publicKeyObject.toString());
 
         //Storing the object representation, used toString() to bypass error
-        mEditor.putString(PUBLIC_KEY, publicKeyObject.toString());
+        mEditor.putString(androidId, publicKeyObject.toString());
 
+        mEditor.commit();
         mEditor.apply();
+
 
     }
 
@@ -139,26 +138,28 @@ public class KeyPairManager {
      * Retrieves the public key from the shared preferences
      * @param sharedPrefName
      * @param context
+     * @param androidID, unique device identifier
      * @return String representation of pub key that was stored
      */
-    public static String retrievePublicKeySharedPref(String sharedPrefName, Context context) {
+    public static String retrievePublicKeySharedPref(String sharedPrefName, Context context,
+                                                     final String androidID) {
 
         mPreferences = context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
 
         //returns default value if key does not exist
-        return mPreferences.getString(PUBLIC_KEY, KEY_DOES_NOT_EXIST);
+        return mPreferences.getString(androidID, KEY_DOES_NOT_EXIST);
     }
 
 
     /**
      * Removes the public key stored in shared preferences
      */
-    public static void removePublicKeySharedPref() throws SharedPrefKeyNotFoundException {
+    public static void removePublicKeySharedPref(final String androidID) throws SharedPrefKeyNotFoundException {
 
         mEditor = mPreferences.edit();
 
-        if (!mPreferences.getString(PUBLIC_KEY, KEY_DOES_NOT_EXIST).equals(KEY_DOES_NOT_EXIST)) {
-            mEditor.remove(PUBLIC_KEY);
+        if (!mPreferences.getString(androidID, KEY_DOES_NOT_EXIST).equals(KEY_DOES_NOT_EXIST)) {
+            mEditor.remove(androidID);
             mEditor.apply();
         }
         else {
