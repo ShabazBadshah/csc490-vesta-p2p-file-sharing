@@ -59,12 +59,9 @@ class Navigation extends Component {
     if (hostingTab){
       cardBody =
       <div>
-        <div>
-        <Button outline squared size="sm" theme="dark" style={{backgroundColor: "#483D8B", color: "white"}}> Select File 📄 </Button>
-        </div>
-        <div>
-        <Button outline squared size="sm" theme="dark" onClick={this.qrActivate} > Host </Button>
-        </div>
+        <a href="/host">
+          <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Ready to Host </Button>
+        </a>
       </div>
     }
 

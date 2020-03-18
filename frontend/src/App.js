@@ -21,30 +21,19 @@ import Navigation from './components/navigation';
 
 function App() {
   return (
-    <div>
+    <Router>
+      <Switch>
+        <Route exact path="/" component={MainPage} />
+        <Route exact path="/Host" component={HostPage} />
+        <Route path="/Receive" component={ReceivePage} />
+        <Route exact path="/404" component={ErrorPage} />
+      <Redirect to="/404"/>
+      </Switch>
+    </Router>
 
-    <img src={background} style={{
-        position: "fixed",
-        top: "0",
-        width: "100%",
-        height: "100%",
-    }}/>
+    );
 
-    <Navigation> </Navigation>
-
-    <Card style={{maxWidth: "300px", position: "absolute", top:"8px", right:"16px"}}>
-    <CardBody>
-    <ButtonToolbar>
-      <Button outline squared size="sm" theme="dark"> Privacy </Button>
-      <Button outline squared size="sm" theme="dark"> Help </Button>
-      <Button outline squared size="sm" theme="dark"> Contact </Button>
-    </ButtonToolbar>
-    </CardBody>
-    </Card>
-
-    <div style={{position: "absolute", top: "8px", left: "16px", fontSize: "48px", color: "black"}}> Vesta < /div>
-    </div>
-  );
+  }
 }
 
 export default App;
