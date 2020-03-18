@@ -1,26 +1,27 @@
 package com.vesta.android.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
-import android.util.Log;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import android.content.SharedPreferences;
+import android.util.Log;
+
 import java.security.Key;
 import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import 	java.security.KeyPairGenerator;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
@@ -32,7 +33,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * Responsible for the creation and management of RSA Public/Private key-pairs
+ * Class responsible for the creation and management of Public/Private key-pairs
+ *
  *
  * [IMPORTANT]
  * We never expose public keys to anything expect for this application, ONLY the methods that require the private-key will have access to it (only when needed)
@@ -110,8 +112,7 @@ public class KeyPairManager {
 
         //Convert the string public key to public key object
         try {
-             publicKeyObject = KeyPairManager.convertBase64StringToPublicKey(publicKey);
-            System.out.println("PUBLIC KEY OBJECTTTT " + publicKeyObject);
+            publicKeyObject = KeyPairManager.convertBase64StringToPublicKey(publicKey);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
@@ -121,7 +122,7 @@ public class KeyPairManager {
         sharedPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
         sharedPrefEditor = sharedPreferences.edit();
 
-        Log.i("PublicKeyObjectString", publicKeyObject.toString());
+        Log.i("PublicKeyObject", publicKeyObject.toString());
 
         //Storing the object representation, used toString() to bypass error
         sharedPrefEditor.putString(PUBLIC_KEY, publicKeyObject.toString());

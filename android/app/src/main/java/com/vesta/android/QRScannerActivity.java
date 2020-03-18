@@ -2,7 +2,6 @@ package com.vesta.android;
 
 import android.Manifest;
 import android.content.SyncStatusObserver;
-
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,13 +16,6 @@ import androidx.core.app.ActivityCompat;
 //import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
 
 import com.google.zxing.Result;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import android.provider.Settings.Secure;
-
-import com.google.zxing.Result;
-import com.vesta.android.model.KeyPairManager;
 
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
@@ -127,6 +119,11 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
          * Check to see if the result from the QR code is from the desktop
          */
 
+        SocketConnection.initSocket();
+        //SocketConnection.sendMessage("BUST");
+        //SocketConnection.getMessage();
+        //new SocketConnection().onDestroy();
+
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
         peerConnectionFactory = new PeerConnectionFactory(options);
@@ -216,21 +213,13 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
         });
 
-        //Only call store shared pref if key does not exist already
-        if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
-            KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                    rawResult.getText());
-        }
-        Log.i("Retrieve shared pref",
-                KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));
-
-//        System.out.println(((TextView)findViewById(R.id.textView)));
+        // System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
-//        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
-//        publicKeyTextView.setText(rawResult.getText());
+        // TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
+        // publicKeyTextView.setText(rawResult.getText());
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }
