@@ -8,7 +8,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
+import android.provider.Settings.Secure;
 import com.google.zxing.Result;
 import com.vesta.android.model.KeyPairManager;
 
@@ -70,9 +70,17 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     @Override
     public void handleResult(Result rawResult) {
 
-        //Storing the rawResult which is the public key in shared preferences
-        KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                rawResult.getText());
+        //Storing the rawResult which is the public key in shared preferences with the
+        // unique identifier of the device
+        String androidID = Secure.getString(this.getBaseContext().getContentResolver(),
+                Secure.ANDROID_ID);
+
+
+        //Only call store shared pref if key does not exist already
+        if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
+            KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+                    rawResult.getText());
+        }
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));
 

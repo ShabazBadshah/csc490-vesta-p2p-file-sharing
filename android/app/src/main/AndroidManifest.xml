@@ -22,8 +22,8 @@
             android:label="@string/title_activity_qrscanner"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
         <activity android:name=".implementation.view_impl.SplashScreenActivity"
+
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
