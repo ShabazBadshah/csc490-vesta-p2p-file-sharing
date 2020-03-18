@@ -1,21 +1,17 @@
 package com.vesta.android;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import java.security.Key;
 import android.provider.Settings.Secure;
 
-
 import com.google.zxing.Result;
-import com.google.zxing.MultiFormatReader;
+import com.vesta.android.model.KeyPairManager;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -82,22 +78,21 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
 
         //Only call store shared pref if key does not exist already
-        if (!KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES,this.getBaseContext(),
-                androidID).equals(KeyPairManager.KEY_DOES_NOT_EXIST)) {
+        if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
             KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                    rawResult.getText(), androidID);
+                    rawResult.getText());
         }
         Log.i("Retrieve shared pref",
-                KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                        androidID));
+                KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));
 
-        System.out.println(((TextView)findViewById(R.id.textView)));
+
+//        System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
 
-        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
-        publicKeyTextView.setText(rawResult.getText());
+//        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
+//        publicKeyTextView.setText(rawResult.getText());
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }
