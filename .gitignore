@@ -2,6 +2,7 @@
 
 # Custom Ignores
 
+.idea/
 .idea/codeStyles/Project.xml
 
 # Built application files
