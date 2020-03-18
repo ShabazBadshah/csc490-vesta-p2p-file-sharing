@@ -119,6 +119,11 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
          * Check to see if the result from the QR code is from the desktop
          */
 
+        SocketConnection.initSocket();
+        //SocketConnection.sendMessage("BUST");
+        //SocketConnection.getMessage();
+        //new SocketConnection().onDestroy();
+
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
         peerConnectionFactory = new PeerConnectionFactory(options);
@@ -208,13 +213,13 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
         });
 
-        System.out.println(((TextView)findViewById(R.id.textView)));
+        // System.out.println(((TextView)findViewById(R.id.textView)));
         Log.v(TAG, rawResult.getText()); // Prints scan result
         Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
-//        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
-//        publicKeyTextView.setText(rawResult.getText());
+        // TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
+        // publicKeyTextView.setText(rawResult.getText());
         // If you would like to resume scanning, call this method below:
         mScannerView.resumeCameraPreview(this);
     }
