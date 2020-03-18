@@ -1,5 +1,8 @@
 ### ANDROID GITIGNORE
 
+# Custom Ignores
+
+.idea/codeStyles/Project.xml
 
 # Built application files
 *.apk

@@ -1,10 +1,9 @@
-package com.vesta.android;
+package com.vesta.android.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
-import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -33,8 +32,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * Class responsible for the creation and management of Public/Private key-pairs
- *
+ * Responsible for the creation and management of RSA Public/Private key-pairs
  *
  * [IMPORTANT]
  * We never expose public keys to anything expect for this application, ONLY the methods that require the private-key will have access to it (only when needed)
@@ -47,16 +45,18 @@ public class KeyPairManager {
 
     public static final String KEY_STORE_PROVIDER_NAME = "AndroidKeyStore";
     public static final String LOG_TAG = KeyPair.class.getSimpleName();
+
+    public static final int RSA_KEY_SIZE = 1024;
     private static PublicKey publicKeyObject;
 
     public static KeyStore keyStore;
     public Context context;
 
-    private static SharedPreferences mPreferences;
-    private static SharedPreferences.Editor mEditor;
+    private static SharedPreferences sharedPreferences;
+    private static SharedPreferences.Editor sharedPrefEditor;
 
-    public static final String KEY_DOES_NOT_EXIST = "KeyDoesNotExist";
-
+    public static final String DEFAULT_VALUE_KEY_DOES_NOT_EXIST = "KeyDoesNotExist";
+    public static final String PUBLIC_KEY = "PublicKey";
 
     public KeyPairManager(Context context) {
         this.context = context;
@@ -82,6 +82,7 @@ public class KeyPairManager {
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                .setKeySize(RSA_KEY_SIZE)
                 .setKeySize(512)
                 .build());
 
@@ -104,10 +105,8 @@ public class KeyPairManager {
      * @param sharedPrefName
      * @param context, which is a subclass of context
      * @param publicKey
-     * @param androidId, unique device identifier
      */
-    public static void storePublicKeySharedPref(String sharedPrefName, Context context,
-                                                String publicKey, final String androidId) {
+    public static void storePublicKeySharedPref(String sharedPrefName, Context context, String publicKey) {
 
         //Convert the string public key to public key object
         try {
@@ -119,51 +118,39 @@ public class KeyPairManager {
             e.printStackTrace();
         }
 
-        mPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
-        mEditor = mPreferences.edit();
+        sharedPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+        sharedPrefEditor = sharedPreferences.edit();
 
         Log.i("PublicKeyObjectString", publicKeyObject.toString());
 
         //Storing the object representation, used toString() to bypass error
-        mEditor.putString(androidId, publicKeyObject.toString());
+        sharedPrefEditor.putString(PUBLIC_KEY, publicKeyObject.toString());
 
-        mEditor.commit();
-        mEditor.apply();
-
-
+        sharedPrefEditor.apply();
     }
 
 
     /**
-     * Retrieves the public key from the shared preferences
-     * @param sharedPrefName
-     * @param context
-     * @param androidID, unique device identifier
-     * @return String representation of pub key that was stored
+     * Retrieves the PublicKey from the specified SharePreferences file
+     *
+     * @param sharedPrefsFileName String, the name of the SharePrefs file that you want to retrieve the PublicKey from
+     * @param context Context, the context objec that SharedPrefs will need to gain access to global application data/services
+     * @return String, the string representation of the PublicKey requested, or the default value if the PublicKey string does not exist
      */
-    public static String retrievePublicKeySharedPref(String sharedPrefName, Context context,
-                                                     final String androidID) {
-
-        mPreferences = context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
-
-        //returns default value if key does not exist
-        return mPreferences.getString(androidID, KEY_DOES_NOT_EXIST);
+    public static String retrievePublicKeySharedPrefsFile(String sharedPrefsFileName, Context context) {
+        return context.getSharedPreferences(sharedPrefsFileName, Context.MODE_PRIVATE).getString(PUBLIC_KEY, DEFAULT_VALUE_KEY_DOES_NOT_EXIST);
     }
 
 
     /**
      * Removes the public key stored in shared preferences
      */
-    public static void removePublicKeySharedPref(final String androidID) throws SharedPrefKeyNotFoundException {
+    public static void removePublicKeySharedPref() {
+        sharedPrefEditor = sharedPreferences.edit();
 
-        mEditor = mPreferences.edit();
-
-        if (!mPreferences.getString(androidID, KEY_DOES_NOT_EXIST).equals(KEY_DOES_NOT_EXIST)) {
-            mEditor.remove(androidID);
-            mEditor.apply();
-        }
-        else {
-            throw new SharedPrefKeyNotFoundException("The key you are trying to remove has not been stored");
+        if (!sharedPreferences.getString(PUBLIC_KEY, DEFAULT_VALUE_KEY_DOES_NOT_EXIST).equals(DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
+            sharedPrefEditor.remove(PUBLIC_KEY);
+            sharedPrefEditor.apply();
         }
     }
 
@@ -272,11 +259,4 @@ public class KeyPairManager {
         byte[] cipherText = cipher.doFinal(Base64.decode(stringToDecrypt, Base64.DEFAULT));
         return new String(cipherText);
     }
-
-    public static class SharedPrefKeyNotFoundException extends Exception {
-        public SharedPrefKeyNotFoundException(String message) {
-            super(message);
-        }
-    }
-
 }
