@@ -43,10 +43,10 @@ class App extends Component {
 
     <Router>
       <Switch>
-      <Route exact path="/" component={MainPage} />
-      <Route exact path="/Host" component={HostPage} />
-      <Route path="/Receive" component={ReceivePage} />
-      <Route exact path="/404" component={ErrorPage} />
+        <Route exact path="/" component={MainPage} />
+        <Route exact path="/Host" component={HostPage} />
+        <Route path="/Receive" component={ReceivePage} />
+        <Route exact path="/404" component={ErrorPage} />
       <Redirect to="/404"/>
       </Switch>
     </Router>

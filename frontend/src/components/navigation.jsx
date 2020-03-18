@@ -59,7 +59,7 @@ class Navigation extends Component {
     if (hostingTab){
       cardBody =
       <div>
-        <a href="#/host">
+        <a href="/host">
           <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Ready to Host </Button>
         </a>
       </div>
