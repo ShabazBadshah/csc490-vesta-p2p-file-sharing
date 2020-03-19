@@ -17,6 +17,8 @@
     "react-scripts": "^3.4.0",
     "react.qrcode.generator": "0.0.3",
     "shards-react": "^1.0.3",
+    "socket.io-client": "^2.3.0",
+    "socket.io-p2p": "^2.2.0",
     "styled-components": "^5.0.1"
   },
   "scripts": {
