@@ -26,28 +26,35 @@ import java.util.List;
  */
 public class SocketConnection extends MainActivity {
 
-    private static Socket mSocket;
-    private static String CHAT_SERVER_URL = "http://81888896.ngrok.io";
+    private static String CHAT_SERVER_URL = "http://13be2d76.ngrok.io";
     private static EditText mInputMessageView;
+    private static Socket mSocket;
+
+    static {
+        try {
+            mSocket = IO.socket(CHAT_SERVER_URL);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     //private static List<Message> mMessages = new ArrayList<Message>();
     private static RecyclerView.Adapter mAdapter;
 
 
     public static void initSocket() {
+        //mSocket = IO.socket(CHAT_SERVER_URL);
+        JSONObject obj = new JSONObject();
+
         try {
-            mSocket = IO.socket(CHAT_SERVER_URL);
-            JSONObject obj = new JSONObject();
-
-            try {
-                obj.put("textVal", "coronaWIRUS");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            mSocket.connect();
-            mSocket.emit("peer-msg", obj);
+            obj.put("textVal", "coronaWIRUS");
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        catch (URISyntaxException e) {}
+
+        mSocket.connect();
+        mSocket.emit("peer-msg", obj);
+
     }
 
     @Override
