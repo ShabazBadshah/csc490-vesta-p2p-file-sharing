@@ -29,6 +29,7 @@ public class SocketConnection extends MainActivity {
     private static String CHAT_SERVER_URL = "http://13be2d76.ngrok.io";
     private static EditText mInputMessageView;
     private static Socket mSocket;
+    private JSONObject messageJson;
 
     static {
         try {
@@ -42,7 +43,10 @@ public class SocketConnection extends MainActivity {
     private static RecyclerView.Adapter mAdapter;
 
 
-    public static void initSocket() {
+    /**
+     * Using this method as test purposes for sending and recieving messages
+     */
+    public void initSocket() {
         //mSocket = IO.socket(CHAT_SERVER_URL);
         JSONObject obj = new JSONObject();
 
@@ -53,7 +57,40 @@ public class SocketConnection extends MainActivity {
         }
 
         mSocket.connect();
+
+        //sends the msg on the peer-msg channel, works
+        //sends coronaWIRUS to server
         mSocket.emit("peer-msg", obj);
+
+        Log.i("OUTSIDE OF ON", "OUTIEWEBFIUWEBFOUBE");
+
+        //this should listen on peer-msg channels in order to recieve msgs from server
+        //does not work yet tho
+        mSocket.on("peer-msg", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                try {
+                    messageJson = new JSONObject(args[0].toString());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Log.i("Recieved Message", messageJson.getString("textVal"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        try {
+            Log.i("Recieved Message", messageJson.getString("textVal"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -95,6 +132,7 @@ public class SocketConnection extends MainActivity {
      */
     private static void addMessage(String message) {
 
+        Log.i("MessageRecieved", message);
         /*mMessages.add(new Message.Builder(Message.TYPE_MESSAGE)
                 .message(message).build());
         mAdapter = new MessageAdapter(mMessages);
@@ -107,7 +145,7 @@ public class SocketConnection extends MainActivity {
      * Used to recieve msgs from other users
      * Listening on events
      */
-    public Emitter.Listener handleIncomingMessages = new Emitter.Listener() {
+    public static Emitter.Listener handleIncomingMessages = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
             System.out.println("WWE ARE IN THERE PLAXXXX");
