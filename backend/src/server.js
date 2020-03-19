@@ -28,7 +28,10 @@ io.on('connection', function (socket) {
   console.log("one user connected " + socket.id)
   socket.on('peer-msg', function (data) {
     console.log('Message jbjkbfrom peer: %s', data.textVal)
-    socket.broadcast.emit('peer-msg', data)
+
+    //broadcast will send msg to everyone exept the sender
+    //use only emit to send to everyone
+    socket.emit('peer-msg', data)
   })
 
   socket.on('disconnect', function () {
