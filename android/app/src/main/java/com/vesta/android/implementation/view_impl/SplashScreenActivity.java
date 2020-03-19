@@ -42,7 +42,7 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        if (isBiometricAuthAvailable()) {
+        /*if (isBiometricAuthAvailable()) {
 //            generateKeyPair("userKeys");
 
             executor = ContextCompat.getMainExecutor(this);
@@ -96,7 +96,10 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
                     SplashScreenActivity.this.finish();
                 }
             }, CLOSE_APP_DELAY_MILLIS);
-        }
+        }*/
+        Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
 
     }
 
