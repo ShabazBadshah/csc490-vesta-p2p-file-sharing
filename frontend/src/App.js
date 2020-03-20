@@ -37,21 +37,7 @@ import ReceivePage from "./pages/receive";
 
 class App extends Component {
   render() {
-<<<<<<< HEAD
 
-  return (
-
-    <Router>
-      <Switch>
-        <Route exact path="/" component={MainPage} />
-        <Route exact path="/Host" component={HostPage} />
-        <Route path="/Receive" component={ReceivePage} />
-        <Route exact path="/404" component={ErrorPage} />
-      <Redirect to="/404"/>
-      </Switch>
-    </Router>
-
-=======
     return (
       <Router>
         <Switch>
@@ -62,7 +48,6 @@ class App extends Component {
           <Redirect to="/404" />
         </Switch>
       </Router>
->>>>>>> 84f253bd4d09210d468d4f89f07efb0cb1c45bf0
     );
   }
 }
