@@ -1,14 +1,15 @@
 import React from "react";
-import QrGenerator from '../components/qrGenerator';
+import HostNav from '../components/hostNav';
+import Menu from '../components/menu';
 
 const HostPage = () => {
 
   return (
     <div>
 
-    <h1> Host </h1>
+    <HostNav> </HostNav>
 
-    <QrGenerator> </QrGenerator>
+    <Menu> </Menu>
 
     </div>
   );
