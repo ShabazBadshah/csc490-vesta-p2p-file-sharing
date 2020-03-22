@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -16,8 +15,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -26,7 +23,7 @@ import java.util.List;
  */
 public class SocketConnection extends MainActivity {
 
-    private static String CHAT_SERVER_URL = "http://21bda266.ngrok.io";
+    private static String CHAT_SERVER_URL = "http://30d5b600.ngrok.io";
     private static EditText mInputMessageView;
     private static Socket mSocket;
     private JSONObject messageJson;

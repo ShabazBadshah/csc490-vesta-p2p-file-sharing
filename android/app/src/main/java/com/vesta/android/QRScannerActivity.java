@@ -1,19 +1,13 @@
 package com.vesta.android;
 
 import android.Manifest;
-import android.content.SyncStatusObserver;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.util.Patterns;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-//import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
 
 import com.google.zxing.Result;
 
@@ -24,18 +18,17 @@ import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
-import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
-
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.Executor;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import kotlin.text.Charsets;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
+//import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
 
 public class QRScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 

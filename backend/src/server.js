@@ -34,7 +34,10 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('peer-msg', data)
     
   })
-
+  socket.on('go-private', function(data) {
+    socket.broadcast.emit('go-private', data);
+  });
+  
   socket.on('disconnect', function () {
     console.log('one user disconnected', socket.id)
   })
