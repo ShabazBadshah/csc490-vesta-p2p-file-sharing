@@ -92,7 +92,7 @@ class Menu extends Component {
       <Button theme="light" style={{color: "#905EAF", position: "absolute", right:"130px", top:"20px", fontWeight: "bold", width: "100px", border: "none", backgroundColor: "inherit"}} onClick={this.helpAct}> Help </Button>
       <Button theme="light" style={{color: "#905EAF", position: "absolute", right:"20px", top:"20px", fontWeight: "bold", width: "100px", border: "none", backgroundColor: "inherit"}} onClick={this.contactAct}> Contact </Button>
 
-      <div style={{position: "absolute", left:"600px", top:"120px"}}>
+      <div style={{position: "absolute", left:"650px", top:"120px"}}>
       {cardTitle}
       <span>
         {cardBody}
