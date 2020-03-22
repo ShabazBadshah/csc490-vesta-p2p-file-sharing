@@ -31,7 +31,8 @@ io.on('connection', function (socket) {
 
     //broadcast will send msg to everyone exept the sender
     //use only emit to send to everyone
-    socket.emit('peer-msg', data)
+    socket.broadcast.emit('peer-msg', data)
+    
   })
 
   socket.on('disconnect', function () {
