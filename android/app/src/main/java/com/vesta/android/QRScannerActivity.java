@@ -119,7 +119,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
          * Check to see if the result from the QR code is from the desktop
          */
 
-        SocketConnection.initSocket();
+        new SocketConnection().sendMessage("KUNAL IS SENDING A MESSAGE");
         //SocketConnection.sendMessage("BUST");
         //SocketConnection.getMessage();
         //new SocketConnection().onDestroy();
