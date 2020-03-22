@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class SocketConnection extends MainActivity {
 
-    private static String CHAT_SERVER_URL = "http://13be2d76.ngrok.io";
+    private static String CHAT_SERVER_URL = "http://21bda266.ngrok.io";
     private static EditText mInputMessageView;
     private static Socket mSocket;
     private JSONObject messageJson;
@@ -46,27 +46,35 @@ public class SocketConnection extends MainActivity {
     /**
      * Using this method as test purposes for sending and recieving messages
      */
-    public void initSocket() {
-        //mSocket = IO.socket(CHAT_SERVER_URL);
+    public void sendMessage(String msg) {
+
         JSONObject obj = new JSONObject();
 
         try {
-            obj.put("textVal", "coronaWIRUS");
+            obj.put("textVal", msg);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        mSocket.connect();
+        getmSocket().connect();
 
         //sends the msg on the peer-msg channel, works
         //sends coronaWIRUS to server
-        mSocket.emit("peer-msg", obj);
+        //symetric encrypted key to the server
+        getmSocket().emit("peer-msg", obj);
 
         Log.i("OUTSIDE OF ON", "OUTIEWEBFIUWEBFOUBE");
 
+    }
+
+    /**
+     * Recieve messages from the server
+     */
+    public void recieveMessages() {
+
         //this should listen on peer-msg channels in order to recieve msgs from server
-        //does not work yet tho
-        mSocket.on("peer-msg", new Emitter.Listener() {
+        getmSocket().on("peer-msg", new Emitter.Listener() {
+
             @Override
             public void call(Object... args) {
                 try {
@@ -75,7 +83,7 @@ public class SocketConnection extends MainActivity {
                         @Override
                         public void run() {
                             try {
-                                Log.i("Recieved Message", messageJson.getString("textVal"));
+                                Log.i("Rec Message", messageJson.getString("textVal"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -86,87 +94,7 @@ public class SocketConnection extends MainActivity {
                 }
             }
         });
-        try {
-            Log.i("Recieved Message", messageJson.getString("textVal"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
-
-    @Override
-    public void onCreate (Bundle savedInstanceState) {
-        Log.i("IN ON CREATEE", "HERE WE ARE");
-        super.onCreate(savedInstanceState);
-        mSocket.connect();
-        mSocket.on("peer-msg", handleIncomingMessages);
-    }
-
-    /**
-     * Send string msg through the socket
-     * @param msg
-     */
-    public static void sendMessage(final String msg) {
-        //String message = mInputMessageView.getText().toString().trim();
-        if (TextUtils.isEmpty(msg)) {
-            return;
-        }
-
-        //mInputMessageView.setText("");
-        addMessage(msg);
-        JSONObject send = new JSONObject();
-        try {
-            send.put("textVal", send);
-            //going to send JSON object
-            mSocket.emit("peer-msg", send);
-            Log.i("JSONOBJ", send.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * Adding the msg to the list
-     * @param message
-     */
-    private static void addMessage(String message) {
-
-        Log.i("MessageRecieved", message);
-        /*mMessages.add(new Message.Builder(Message.TYPE_MESSAGE)
-                .message(message).build());
-        mAdapter = new MessageAdapter(mMessages);
-        mAdapter = new MessageAdapter( mMessages);
-        mAdapter.notifyItemInserted(0);*/
-        //scrollToBottom();
-    }
-
-    /**
-     * Used to recieve msgs from other users
-     * Listening on events
-     */
-    public static Emitter.Listener handleIncomingMessages = new Emitter.Listener() {
-        @Override
-        public void call(final Object... args) {
-            System.out.println("WWE ARE IN THERE PLAXXXX");
-            ((Activity) new MainActivity().getBaseContext()).runOnUiThread(new Runnable() {
-
-                public void run() {
-                    Log.i("THE ARGS", args.toString());
-                    JSONObject data = (JSONObject) args[0];
-
-                    try{
-                        String message = data.getString("textVal");
-                        addMessage(message);
-                        Log.i("THIS IS THE MSG", message);
-                    } catch (JSONException e) {
-                        return;
-                    }
-
-                }
-            });
-        }
-    };
 
     /**
      * Returns the socket object
