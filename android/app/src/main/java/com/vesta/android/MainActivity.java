@@ -119,11 +119,6 @@ public class MainActivity extends AppCompatActivity {
     public void onRegenerateKeyBtnClick(View view) {
         generateQr();
     }
-
-    public void onLaunchQrActivity(View view){
-            Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
-            startActivity(intent);
-    }
     
     public android.content.Context getContext() {
         return this.getBaseContext();
