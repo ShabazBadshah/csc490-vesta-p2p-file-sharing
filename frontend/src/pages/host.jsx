@@ -6,7 +6,6 @@ const HostPage = () => {
 
   return (
     <div>
-
     <HostNav> </HostNav>
 
     <Menu> </Menu>

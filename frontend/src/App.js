@@ -37,7 +37,6 @@ import ReceivePage from "./pages/receive";
 
 class App extends Component {
   render() {
-
     return (
       <Router>
         <Switch>
