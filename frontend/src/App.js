@@ -30,6 +30,10 @@ import {
   Redirect
 } from "react-router-dom";
 
+import MainPage from "./pages/main";
+import ErrorPage from "./pages/404error";
+import HostPage from "./pages/host";
+import ReceivePage from "./pages/receive";
 
 class App extends Component {
   render() {
