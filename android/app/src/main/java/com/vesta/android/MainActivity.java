@@ -8,7 +8,18 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import java.io.IOException;
+import androidx.appcompat.app.AppCompatActivity;
+
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+
+import java.io.IOException;
+
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +33,7 @@ import androidmads.library.qrgenearator.QRGContents;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -102,6 +114,15 @@ public class MainActivity extends AppCompatActivity {
     public void onLaunchQrActivity(View view){
         Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
         startActivity(intent);
+    }
+
+    public void onRegenerateKeyBtnClick(View view) {
+        generateQr();
+    }
+
+    public void onLaunchQrActivity(View view){
+            Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
+            startActivity(intent);
     }
     
     public android.content.Context getContext() {

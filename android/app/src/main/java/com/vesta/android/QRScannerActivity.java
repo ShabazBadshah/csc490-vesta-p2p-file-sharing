@@ -45,9 +45,9 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
 
     /*
-    * The name of our shared preferences
-    * Used to instantiate the shared preferences object with this name
-    * */
+     * The name of our shared preferences
+     * Used to instantiate the shared preferences object with this name
+     * */
     private static final String SHARED_PREFERENCES = "SharedPreferences";
 
     private void setScannerProperties(ZXingScannerView qrCodeScanner) {
@@ -100,10 +100,17 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         //TODO: Commented out for now for testing purposes, to test if web rtc connection
         // is established
         //Storing the rawResult which is the public key in shared preferences
+<<<<<<< HEAD
        // KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
          //       rawResult.getText());
        // Log.i("Retrieve shared pref",
      //           KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
+=======
+        // KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+        //       rawResult.getText());
+        // Log.i("Retrieve shared pref",
+        //           KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
+>>>>>>> 3615e1375a4947f1a057960782b62fcb3988ea0d
 
 
         /**
@@ -120,7 +127,11 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         PeerConnectionFactory.initializeAndroidGlobals(this, true, true, true);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
         peerConnectionFactory = new PeerConnectionFactory(options);
+<<<<<<< HEAD
        // binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+=======
+        // binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+>>>>>>> 3615e1375a4947f1a057960782b62fcb3988ea0d
 
         //PeerConnection localPeerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, pcConstraints, pcObserver);
 
@@ -164,6 +175,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 }, new MediaConstraints());
             }
         }, new MediaConstraints());
+<<<<<<< HEAD
 
 
         //init of localDataChannel
@@ -188,6 +200,32 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                     //} else {
                       //  binding.sendButton.setEnabled(false);
                     //}
+=======
+
+
+        //init of localDataChannel
+        localDataChannel = localPeerConnection.createDataChannel("dataChannel", initDC);
+
+        localDataChannel.registerObserver(new DataChannel.Observer() {
+
+            @Override
+            public void onBufferedAmountChange(long l) {
+
+            }
+
+            @Override
+            public void onStateChange() {
+                Log.d(TAG, "onStateChange: " + localDataChannel.state().toString());
+
+
+                // runOnUiThread(() -> {
+
+                //if (localDataChannel.state() == DataChannel.State.OPEN) {
+                //  binding.sendButton.setEnabled(true);
+                //} else {
+                //  binding.sendButton.setEnabled(false);
+                //}
+>>>>>>> 3615e1375a4947f1a057960782b62fcb3988ea0d
                 //});
 
             }
@@ -225,7 +263,11 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
      * @return
      */
     public static PeerConnection createPeerConnection(PeerConnectionFactory factory,
+<<<<<<< HEAD
                     boolean isLocal) {
+=======
+                                                      boolean isLocal) {
+>>>>>>> 3615e1375a4947f1a057960782b62fcb3988ea0d
         //the local peer
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(new ArrayList<PeerConnection.IceServer>());
         MediaConstraints pcConstraints = new MediaConstraints();
@@ -343,3 +385,4 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         return ByteBuffer.wrap(msg.getBytes(charset));
     }
 }
+
