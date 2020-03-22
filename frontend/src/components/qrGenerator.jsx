@@ -2,7 +2,28 @@ import React, { Component } from 'react';
 import QrCode from 'react.qrcode.generator';
 import Enigma from '@cubbit/enigma';
 
+var P2P = require('socket.io-p2p');
+var io = require('socket.io-client');
+var socket = io("http://21bda266.ngrok.io");
+
 class QrGenerator extends Component {
+ 
+  constructor(props) {
+    super(props)
+    this.listenForEvents = this.listenForEvents.bind(this);
+  }
+
+  //socket will be ready to listen automatically upon load
+  componentDidMount() {
+    window.addEventListener('load', this.listenForEvents);
+  }
+
+  //socket listening code 
+  listenForEvents() {
+    socket.on('peer-msg', function(msg){
+      console.log(msg);
+    });
+  }
 
   render() {
 
