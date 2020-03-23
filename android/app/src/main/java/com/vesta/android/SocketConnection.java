@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 public class SocketConnection extends MainActivity {
 
     private static Socket mSocket;
-    private static String CHAT_SERVER_URL = "http://30d5b600.ngrok.io";
+    private static String CHAT_SERVER_URL = "http://9d019160.ngrok.io";
     private static EditText mInputMessageView;
     private JSONObject messageJson;
 
@@ -59,9 +59,7 @@ public class SocketConnection extends MainActivity {
         //sends coronaWIRUS to server
         //symetric encrypted key to the server
         getmSocket().emit("peer-msg", obj);
-
-        Log.i("OUTSIDE OF ON", "OUTIEWEBFIUWEBFOUBE");
-
+        
     }
 
     /**

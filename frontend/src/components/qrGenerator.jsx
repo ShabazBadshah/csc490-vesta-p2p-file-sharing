@@ -4,7 +4,7 @@ import Enigma from '@cubbit/enigma';
 
 var P2P = require('socket.io-p2p');
 var io = require('socket.io-client');
-var socket = io("http://21bda266.ngrok.io");
+var socket = io("http://9d019160.ngrok.io");
 
 class QrGenerator extends Component {
  
