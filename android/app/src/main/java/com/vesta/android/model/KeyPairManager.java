@@ -33,7 +33,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * Responsible for the creation and management of RSA Public/Private key-pairs
+ * Class responsible for the creation and management of Public/Private key-pairs
+ *
  *
  * [IMPORTANT]
  * We never expose public keys to anything expect for this application, ONLY the methods that require the private-key will have access to it (only when needed)
@@ -111,7 +112,7 @@ public class KeyPairManager {
 
         //Convert the string public key to public key object
         try {
-             publicKeyObject = KeyPairManager.convertBase64StringToPublicKey(publicKey);
+            publicKeyObject = KeyPairManager.convertBase64StringToPublicKey(publicKey);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
