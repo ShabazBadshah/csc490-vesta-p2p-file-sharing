@@ -8,20 +8,41 @@ import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import java.io.IOException;
+import androidx.appcompat.app.AppCompatActivity;
+
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+
+import java.io.IOException;
+
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-
+import android.widget.TextView;
+import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vesta.android.model.KeyPairManager;
 
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
+
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
@@ -90,13 +111,16 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Log error", e.toString());
         }
     }
+    public void onLaunchQrActivity(View view){
+        Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
+        startActivity(intent);
+    }
 
     public void onRegenerateKeyBtnClick(View view) {
         generateQr();
     }
-
-    public void onLaunchQrActivity(View view) {
-        Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
-        startActivity(intent);
+    
+    public android.content.Context getContext() {
+        return this.getBaseContext();
     }
 }
