@@ -112,7 +112,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         }
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));*/
-        System.out.println("HERE IS THE RAW RESULT " + rawResult.getText());
+        System.out.println(rawResult.getText());
         //if (rawResult.getText()) //parse the string and check if its from the desktop
 
         try {
