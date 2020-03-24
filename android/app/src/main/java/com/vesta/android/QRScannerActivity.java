@@ -13,6 +13,8 @@ import android.provider.Settings.Secure;
 import com.google.zxing.Result;
 import com.vesta.android.model.KeyPairManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
@@ -37,6 +39,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
     private ZXingScannerView mScannerView;
     private final int MY_CAMERA_REQUEST_CODE = 1888;
+    private JSONObject result;
     private static final String TAG = "ScannerActivity";
     private static PeerConnectionFactory peerConnectionFactory;
     private static PeerConnection localPeerConnection;
@@ -109,11 +112,25 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         }
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));*/
-        System.out.println("HERE IS THE RAW RESULT " + rawResult.getText());
+        System.out.println(rawResult.getText());
         //if (rawResult.getText()) //parse the string and check if its from the desktop
 
+        try {
+            result = new JSONObject(rawResult.getText());
+            System.out.println(result.get("fromDesktop") instanceof Boolean);
+            Log.i("fromDesktop", result.get("fromDesktop").toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         //sending message through the socket
-        new SocketConnection().sendMessage("KUNAL IS SENDING A MESSAGE");
+        try {
+            if ((Boolean) result.get("fromDesktop")) {
+                Log.i("SocketConnection", "Establishing Socket Connection");
+                new SocketConnection().sendMessage("KUNAL IS SENDING A MESSAGE");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         this.finish();
     }
 }

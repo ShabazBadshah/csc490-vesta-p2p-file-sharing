@@ -28,6 +28,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.vesta.android.model.KeyPairManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGContents;
 
@@ -82,8 +85,20 @@ public class MainActivity extends AppCompatActivity {
         try {
             KeyPairManager keyPairManager = new KeyPairManager(getApplicationContext());
             keyPairManager.generateRsaEncryptionKeyPair("userKeys");
-            qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(
-                    KeyPairManager.getKeyPairFromKeystore("userKeys").getPublic()),
+
+
+            //Our QR code containing JSON object
+            JSONObject qrJson = new JSONObject();
+            try {
+                qrJson.put("key", KeyPairManager.convertRsaKeyToBase64String(
+                        KeyPairManager.getKeyPairFromKeystore("userKeys").getPublic()));
+                qrJson.put("fromDesktop", false);
+                Log.i("QRJson", qrJson.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            qrgEncoder = new QRGEncoder(qrJson.toString(),
                     QRGContents.Type.TEXT, smallerDimension);
 
             qrgEncoder.setColorWhite(getColor(R.color.primaryBrandColour));

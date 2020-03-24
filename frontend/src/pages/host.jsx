@@ -10,7 +10,7 @@ var receiveChannel = null;    // RTCDataChannel for the remote (receiver)
 
 var P2P = require('socket.io-p2p');
 var io = require('socket.io-client');
-var socket = io("http://9d019160.ngrok.io");
+var socket = io("http://c02ffb6d.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts)
 p2pSocket.on('peer-msg', function (data) {

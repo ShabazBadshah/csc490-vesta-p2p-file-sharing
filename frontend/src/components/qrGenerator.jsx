@@ -4,7 +4,7 @@ import Enigma from '@cubbit/enigma';
 
 var P2P = require('socket.io-p2p');
 var io = require('socket.io-client');
-var socket = io("http://9d019160.ngrok.io");
+var socket = io("http://c02ffb6d.ngrok.io");
 
 class QrGenerator extends Component {
  
@@ -50,10 +50,16 @@ class QrGenerator extends Component {
     // random 24 character string
     // const qrValue = Math.random().toString(36).slice(-12).concat(
     // Math.random().toString(36).slice(-12))
+    //{key: textDec, fromDesktop: true}
+    let state = {
+      key: textDec,
+      fromDesktop: true
+    }
+    console.log(state)
 
     return (
       <div>
-      <QrCode value={textDec}/>
+      <QrCode value={JSON.stringify(state)} size='150'/>
       </div>
     )
 
