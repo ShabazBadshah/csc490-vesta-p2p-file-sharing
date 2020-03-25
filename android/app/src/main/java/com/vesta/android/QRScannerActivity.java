@@ -103,13 +103,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         // unique identifier of the device
         /*String androidID = Secure.getString(this.getBaseContext().getContentResolver(),
                 Secure.ANDROID_ID);
-
-
-        //Only call store shared pref if key does not exist already
-        if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
-            KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                    rawResult.getText());
-        }
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));*/
         System.out.println(rawResult.getText());
@@ -122,11 +115,21 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //sending message through the socket
+
         try {
+            //socket connection initiated when QR code is from the desktop
             if ((Boolean) result.get("fromDesktop")) {
                 Log.i("SocketConnection", "Establishing Socket Connection");
                 new SocketConnection().sendMessage("KUNAL IS SENDING A MESSAGE");
+            }
+            //otherwise, store the public key in the shared preferences for future reference
+            //will retrieve it from shared pref when it has to be encrypted it QR code on Desktop
+            else {
+                //Only call store shared pref if key does not exist already
+                if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
+                    KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+                            rawResult.getText());
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
