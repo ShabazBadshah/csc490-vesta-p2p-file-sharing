@@ -59,7 +59,9 @@ public class SocketConnection extends MainActivity {
         //sends coronaWIRUS to server
         //symetric encrypted key to the server
         getmSocket().emit("peer-msg", obj);
-        
+
+        Log.i("OUTSIDE OF ON", "OUTIEWEBFIUWEBFOUBE");
+
     }
 
     /**

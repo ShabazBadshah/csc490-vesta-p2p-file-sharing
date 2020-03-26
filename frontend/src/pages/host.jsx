@@ -1,18 +1,14 @@
-import React from "react";
+import React, { Component } from "react";
 import HostNav from '../components/hostNav';
 import Menu from '../components/menu';
 
-var localConnection = null;   // RTCPeerConnection for our "local" connection
-var remoteConnection = null;  // RTCPeerConnection for the "remote"
-  
-var sendChannel = null;       // RTCDataChannel for the local (sender)
-var receiveChannel = null;    // RTCDataChannel for the remote (receiver)
-
 var P2P = require('socket.io-p2p');
+var ioStream = require('socket.io-stream');
 var key = "key"
+var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://5072cabb.ngrok.io");
+var socket = io("http://a3d26d6f.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts)
 p2pSocket.on('peer-msg', function (data) {
@@ -24,6 +20,9 @@ p2pSocket.on('go-private', function () {
   p2pSocket.upgrade(); // upgrade to peerConnection
   privateClick();
 });  
+ioStream(socket).on('file', (stream, data) => {
+  stream.pipe(fs.createWriteStream(data.filename));
+});
 const privateClick = () => {
   socket.emit('go-private', true);
   p2pSocket.useSockets = false;
@@ -37,24 +36,46 @@ const submitClick = () => {
   console.log("IT CLICKED")
 }
 
-const HostPage = () => {
+class Host extends Component {
+ 
+  constructor(props) {
+    super(props)
+    this.sendFileClick = this.sendFileClick.bind(this);
+    this.fileInput = React.createRef();
+  }
+  sendFileClick(){
+    //   var socket = io.connect("http://691afa1c.ngrok.io");
+    ioStream.forceBase64 = true;
+    console.log("Uploading file...")
+    var file = this.fileInput.current.files[0];
+    var stream = ioStream.createStream();
+    ioStream(socket).emit('file', stream, { filename: "recieved-" + file.name });
+    ioStream.createBlobReadStream(file).pipe(stream);
+}
+
+//const HostPage = () => {
+
+  render() {
+    return (
+      <div>
+      <HostNav> </HostNav>
+
+      {/* <Menu> </Menu> */}
+
+      <input id="submitText" type="text"/>
+      <button type="submit" onClick={submitClick}>Submit</button>
+      <button id="privateButton" type="submit" onClick={privateClick}>Private</button>
+      <button id="sendFileButton" type="submit" onClick={(e) => this.sendFileClick(e)}>SendFile</button>
+      <input id="file" type="file" ref={this.fileInput}/>
 
 
-  return (
-    <div>
-    <HostNav> </HostNav>
 
-    {/* <Menu> </Menu> */}
+      </div>
 
-    <input id="submitText" type="text"/>
-    <button type="submit" onClick={submitClick}>Submit</button>
-    <button id="privateButton" type="submit" onClick={privateClick}>Private</button>
+      
 
-    </div>
+    );
+  }
+}
 
-    
-
-  );
-};
-
-export default HostPage;
+export default Host;

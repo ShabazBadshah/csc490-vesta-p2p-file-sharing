@@ -3,6 +3,7 @@
 # Custom Ignores
 
 .idea/codeStyles/Project.xml
+.vscode/
 
 # Built application files
 *.apk
