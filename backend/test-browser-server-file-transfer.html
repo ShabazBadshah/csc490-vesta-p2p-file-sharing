@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+  </head>
+  
+  <body>
+    
+    <p>Select a file and it will be uploaded automatically</p>
+	  <input type="file" id="file">
+    
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io-stream/0.9.1/socket.io-stream.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script>
+      $(function (){
+        var socket = io.connect("http://691afa1c.ngrok.io");
+        ss.forceBase64 = true;
+        
+        $('#file').change(function(e) {
+            console.log("Uploading file...")
+            var file = e.target.files[0];
+            var stream = ss.createStream();
+            ss(socket).emit('file', stream, { filename: "recieved-" + file.name });
+            ss.createBlobReadStream(file).pipe(stream);
+        });
+      });
+    </script>
+  </body>
+</html>
