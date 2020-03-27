@@ -8,7 +8,7 @@ var key = "key"
 var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://a3d26d6f.ngrok.io");
+var socket = io("http://343de520.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts)
 p2pSocket.on('peer-msg', function (data) {
@@ -21,12 +21,14 @@ p2pSocket.on('go-private', function () {
   privateClick();
 });  
 ioStream(socket).on('file', (stream, data) => {
-  stream.pipe(fs.createWriteStream(data.filename));
+  console.log('host jsx file channel')
+  //socket.upgrade()
+  console.log(data)
+  //stream.pipe(fs.createWriteStream(data.filename));
 });
 const privateClick = () => {
   socket.emit('go-private', true);
   p2pSocket.useSockets = false;
-
 }
 
 const submitClick = () => {

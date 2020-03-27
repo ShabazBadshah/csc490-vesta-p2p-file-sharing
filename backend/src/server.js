@@ -14,7 +14,7 @@ const p2pserver = require('socket.io-p2p-server').Server;
 socketIoServer.use(p2pserver);
 
 socketIoServer.on('connection', socket => {
-  console.log(`User connected: ${socket.id}`);
+  //console.log(`User connected: ${socket.id}`);
 
   socket.on('go-private', data => {
     socket.broadcast.emit('go-private', data);
