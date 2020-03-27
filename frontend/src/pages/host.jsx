@@ -19,6 +19,7 @@ p2pSocket.on('peer-msg', function (data) {
 });
 p2pSocket.on('go-private', function () {
   p2pSocket.upgrade();
+  console.log("going private");
   // upgrade to peerConnection
   // privateClick();
   p2pSocket.useSockets = false;
@@ -38,6 +39,7 @@ p2pSocket.on('peer-file', function (data) {
   document.body.removeChild(a);
 });
 const privateClick = () => {
+  p2pSocket.upgrade();
   socket.emit('go-private', true);
   p2pSocket.useSockets = false;
 
