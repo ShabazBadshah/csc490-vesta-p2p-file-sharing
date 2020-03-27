@@ -34,7 +34,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
     private ZXingScannerView mScannerView;
     private final int MY_CAMERA_REQUEST_CODE = 1888;
-    private JSONObject result;
+    //private JSONObject result;
     private static final String TAG = "ScannerActivity";
     private static PeerConnectionFactory peerConnectionFactory;
     private static PeerConnection localPeerConnection;
