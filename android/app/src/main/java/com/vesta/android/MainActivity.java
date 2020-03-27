@@ -1,24 +1,54 @@
 package com.vesta.android;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import java.io.IOException;
+import androidx.appcompat.app.AppCompatActivity;
 
 import androidmads.library.qrgenearator.QRGEncoder;
 import androidmads.library.qrgenearator.QRGContents;
+
+import java.io.IOException;
+
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+import java.io.IOException;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.vesta.android.model.KeyPairManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 
-import androidx.appcompat.app.AppCompatActivity;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,32 +57,49 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap bitmap;
     private QRGEncoder qrgEncoder;
     private Bitmap bitmapResult;
+    private FrameLayout regenerateKeyBtn;
+    private FrameLayout scanQrBtn;
+    private KeyPairManager keyPairManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+        setContentView(R.layout.activity_main);
 
-        setContentView(R.layout.activity_qr_main);
+        qrImage = findViewById(R.id.publicKeyQrImgView);
+        regenerateKeyBtn = findViewById(R.id.regenerateKeyBtn);
 
-        qrImage = findViewById(R.id.qr_image);
+        scanQrBtn = findViewById(R.id.scanQrBtn);
 
-//        calculating bitmap dimension
-        WindowManager manager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
+        generateQr();
+    }
+
+    public void generateQr() {
         Point point = new Point();
-        display.getSize(point);
+        ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay().getSize(point);
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        smallerDimension = smallerDimension * 3 / 4;
 
         try {
-            qrgEncoder = new QRGEncoder(KeyPairManager.convertRsaKeyToBase64String(
-                    KeyPairManager.getKeyPairFromKeystore("userKeys").getPublic()),
-                    null, QRGContents.Type.TEXT, smallerDimension);
+            KeyPairManager keyPairManager = new KeyPairManager(getApplicationContext());
+            keyPairManager.generateRsaEncryptionKeyPair("userKeys");
+
+
+            //Our QR code containing JSON object
+            JSONObject qrJson = new JSONObject();
+            try {
+                qrJson.put("key", KeyPairManager.convertRsaKeyToBase64String(
+                        KeyPairManager.getKeyPairFromKeystore("userKeys").getPublic()));
+                qrJson.put("fromDesktop", false);
+                Log.i("QRJson", qrJson.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            qrgEncoder = new QRGEncoder(qrJson.toString(),
+                    QRGContents.Type.TEXT, smallerDimension);
 
             qrgEncoder.setColorWhite(getColor(R.color.primaryBrandColour));
             qrgEncoder.setColorBlack(getColor(android.R.color.white));
@@ -66,6 +113,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (UnrecoverableEntryException e) {
             e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchProviderException e) {
+            e.printStackTrace();
         }
 
         try {
@@ -74,5 +125,17 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.v("Log error", e.toString());
         }
+    }
+    public void onLaunchQrActivity(View view){
+        Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
+        startActivity(intent);
+    }
+
+    public void onRegenerateKeyBtnClick(View view) {
+        generateQr();
+    }
+    
+    public android.content.Context getContext() {
+        return this.getBaseContext();
     }
 }

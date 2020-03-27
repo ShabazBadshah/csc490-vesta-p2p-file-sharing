@@ -1,9 +1,11 @@
 ### ANDROID GITIGNORE
 
+# Custom Ignores
+
+.idea/codeStyles/Project.xml
 
 # Built application files
 *.apk
-*.aar
 *.ap_
 *.aab
 

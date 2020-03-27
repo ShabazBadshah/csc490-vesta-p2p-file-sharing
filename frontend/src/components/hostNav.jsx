@@ -18,7 +18,7 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css";
 import QrGenerator from './qrGenerator';
-import { FilePicker } from 'react-file-picker';
+
 
 class HostNav extends Component {
 
@@ -33,13 +33,7 @@ class HostNav extends Component {
 
       <Card style={{position: "absolute", left:"80px", top:"150px", width: "500px"}}>
         <CardBody>
-        <FilePicker
-            extensions={['md']}
-
-
-            >
             <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Select File </Button>
-        </FilePicker>
             <br/>
             <br/>
             <Button theme="light" active="False"> Stream </Button>

@@ -1,32 +1,59 @@
 package com.vesta.android;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import java.security.Key;
+import android.provider.Settings.Secure;
 
 import com.google.zxing.Result;
-import com.google.zxing.MultiFormatReader;
+import com.vesta.android.model.KeyPairManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.webrtc.DataChannel;
+import org.webrtc.IceCandidate;
+import org.webrtc.MediaConstraints;
+import org.webrtc.MediaStream;
+import org.webrtc.PeerConnection;
+import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RtpReceiver;
+import org.webrtc.SdpObserver;
+import org.webrtc.SessionDescription;
+
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+
+import kotlin.text.Charsets;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
+//import com.myhexaville.androidwebrtc.databinding.ActivitySampleDataChannelBinding;
 
 public class QRScannerActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
 
     private ZXingScannerView mScannerView;
     private final int MY_CAMERA_REQUEST_CODE = 1888;
+    private JSONObject result;
     private static final String TAG = "ScannerActivity";
+    private static PeerConnectionFactory peerConnectionFactory;
+    private static PeerConnection localPeerConnection;
+    private static PeerConnection remotePeerConnection;
+    private static DataChannel localDataChannel;
+    private static  PeerConnection.Observer pcObserver;
+    //private ActivitySampleDataChannelBinding binding;
+
+
 
     /*
-    * The name of our shared preferences
-    * Used to instantiate the shared preferences object with this name
-    * */
+     * The name of our shared preferences
+     * Used to instantiate the shared preferences object with this name
+     * */
     private static final String SHARED_PREFERENCES = "SharedPreferences";
 
     private void setScannerProperties(ZXingScannerView qrCodeScanner) {
@@ -72,22 +99,42 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
      */
     @Override
     public void handleResult(Result rawResult) {
-
-        //Storing the rawResult which is the public key in shared preferences
-        KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                rawResult.getText());
+        //Storing the rawResult which is the public key in shared preferences with the
+        // unique identifier of the device
+        /*String androidID = Secure.getString(this.getBaseContext().getContentResolver(),
+                Secure.ANDROID_ID);
         Log.i("Retrieve shared pref",
-                KeyPairManager.retrievePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext()));
+                KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));*/
+        System.out.println(rawResult.getText());
+        //if (rawResult.getText()) //parse the string and check if its from the desktop
 
-        System.out.println(((TextView)findViewById(R.id.textView)));
-        Log.v(TAG, rawResult.getText()); // Prints scan result
-        Log.v(TAG, rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-        setContentView(R.layout.activity_main);
+        try {
+            result = new JSONObject(rawResult.getText());
+            System.out.println(result.get("fromDesktop") instanceof Boolean);
+            Log.i("fromDesktop", result.get("fromDesktop").toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-        TextView publicKeyTextView = (TextView)findViewById(R.id.textView);
-        publicKeyTextView.setText(rawResult.getText());
-        // If you would like to resume scanning, call this method below:
-        mScannerView.resumeCameraPreview(this);
+        try {
+            //socket connection initiated when QR code is from the desktop
+            if ((Boolean) result.get("fromDesktop")) {
+                Log.i("SocketConnection", "Establishing Socket Connection");
+                new SocketConnection().sendMessage("KUNAL IS SENDING A MESSAGE");
+            }
+            //otherwise, store the public key in the shared preferences for future reference
+            //will retrieve it from shared pref when it has to be encrypted it QR code on Desktop
+            else {
+                //Only call store shared pref if key does not exist already
+                if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
+                    KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
+                            rawResult.getText());
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        this.finish();
     }
-
 }
+
