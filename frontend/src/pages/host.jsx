@@ -9,7 +9,7 @@ var key = "key"
 //var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://aca3bc85.ngrok.io");
+var socket = io("http://a25ee7d4.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts)
 p2pSocket.on('peer-msg', function (data) {
@@ -28,6 +28,7 @@ p2pSocket.on('peer-file', function (data) {
   var dec = crypto.createDecipher("aes-256-ctr",key).update(data.textVal,"hex","utf8");
   console.log('From a peer encrypted: %s', data.textVal);
   console.log('From a peer decrypted: %s', dec);
+  console.log(data)
   var blob = new Blob([dec]);
   var url = window.URL.createObjectURL(blob);
   var a = document.createElement('a');
@@ -60,9 +61,10 @@ class Host extends Component {
   }
   sendFileClick(){
       var reader = new FileReader();
+      console.log(this.fileInput)
       var file = this.fileInput.current.files[0]
       reader.readAsText(file);
-
+      console.log(reader)
       reader.onload = function() {
           var text = reader.result;
           var enc = crypto.createCipher("aes-256-ctr",key).update(text,"utf-8","hex");
