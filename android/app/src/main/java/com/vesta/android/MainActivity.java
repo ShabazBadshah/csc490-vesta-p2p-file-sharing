@@ -137,10 +137,6 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Log error", e.toString());
         }
     }
-    public void onLaunchQrActivity(View view){
-        Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
-        startActivity(intent);
-    }
 
     public android.content.Context getContext() {
         return this.getBaseContext();

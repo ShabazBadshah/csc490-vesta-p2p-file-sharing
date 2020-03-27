@@ -25,10 +25,21 @@ import org.webrtc.RtpReceiver;
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.UnrecoverableEntryException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 import kotlin.text.Charsets;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -105,10 +116,12 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 Secure.ANDROID_ID);
         Log.i("Retrieve shared pref",
                 KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES, this.getBaseContext()));*/
+        System.out.println("#&$*&#^%*&#^%*&#^%");
         System.out.println(rawResult.getText());
         //if (rawResult.getText()) //parse the string and check if its from the desktop
 
         try {
+            //this is the symetric key that is retrieved from the desktop
             result = new JSONObject(rawResult.getText());
             System.out.println(result.get("fromDesktop") instanceof Boolean);
             Log.i("fromDesktop", result.get("fromDesktop").toString());
@@ -116,9 +129,45 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             e.printStackTrace();
         }
 
+
         try {
             //socket connection initiated when QR code is from the desktop
             if ((Boolean) result.get("fromDesktop")) {
+
+
+                //returns public key object from the shared pref
+                String pubKeySharedPref = KeyPairManager
+                        .retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext());
+
+                //encrypt public key in shared pref with the sym key in the result
+                String symKey = result.getString("key");
+
+                try {
+                    KeyPairManager.encrypt(symKey, pubKeySharedPref);
+                    Log.i("EncPubKeyWithSymKey", KeyPairManager.encrypt(symKey, pubKeySharedPref));
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                } catch (CertificateException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (UnrecoverableEntryException e) {
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                }
+
+
                 Log.i("SocketConnection", "Establishing Socket Connection");
                 new SocketConnection().sendMessage("KUNAL IS SENDING A MESSAGE");
             }
@@ -128,7 +177,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 //Only call store shared pref if key does not exist already
                 if (!KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext()).equals(KeyPairManager.DEFAULT_VALUE_KEY_DOES_NOT_EXIST)) {
                     KeyPairManager.storePublicKeySharedPref(SHARED_PREFERENCES, this.getBaseContext(),
-                            rawResult.getText());
+                            result.getString("key"));
                 }
             }
         } catch (JSONException e) {

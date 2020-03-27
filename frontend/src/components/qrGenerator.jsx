@@ -40,10 +40,12 @@ class QrGenerator extends Component {
 
 
 
-    const key = Enigma.AES.create_key()
+    const key = Enigma.AES.create_key(128)
+    console.log(key.length)
     // textEnd = TextEncoder("utf-8").encode(myString);
-    const textDec = new TextDecoder("utf-8").decode(key).substring(0, 12);
 
+    const textDec = new TextDecoder("utf-8").decode(key)/*.substring(0, 12)*/
+    console.log(textDec)
     // const sharedSecret = crypto.randomBytes(16); // 128-bits === 16-bytes
     // const textSecret = sharedSecret.toString('base64');
 
@@ -59,7 +61,7 @@ class QrGenerator extends Component {
 
     return (
       <div>
-      <QrCode value={JSON.stringify(state)} size='150'/>
+      <QrCode value={JSON.stringify(state)} size='200'/>
       </div>
     )
 
