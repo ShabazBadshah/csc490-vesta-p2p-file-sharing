@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import QrCode from 'react.qrcode.generator';
 import Enigma from '@cubbit/enigma';
 
-var P2P = require('socket.io-p2p');
 var io = require('socket.io-client');
-var socket = io("http://a25ee7d4.ngrok.io");
+var socket = io("http://31640a7d.ngrok.io");
 
 class QrGenerator extends Component {
  
@@ -26,33 +25,24 @@ class QrGenerator extends Component {
   }
 
   render() {
+    /* 
+      The following generates a random qr code based on a key generated through
+      WebAssembly import, the following import can be found below:
 
-    /*
-
-    The following generates a random qr code based on a key generated through
-    WebAssembly import, the following import can be found below:
-
-    - References:
-    https://medium.com/cubbit/how-to-build-a-crypto-isomorphic-library-with-javascript-and-webassembly-6fc7aa708437
-    https://github.com/cubbit/enigma
-
+      References:
+      - https://medium.com/cubbit/how-to-build-a-crypto-isomorphic-library-with-javascript-and-webassembly-6fc7aa708437
+      - https://github.com/cubbit/enigma
     */
 
+    const aesKey = Enigma.AES.create_key();
 
-
-    const key = Enigma.AES.create_key(128)
-    console.log(key.length)
-    // textEnd = TextEncoder("utf-8").encode(myString);
-
-    const textDec = new TextDecoder("utf-8").decode(key)/*.substring(0, 12)*/
-    console.log(textDec)
-    // const sharedSecret = crypto.randomBytes(16); // 128-bits === 16-bytes
-    // const textSecret = sharedSecret.toString('base64');
-
-    // random 24 character string
-    // const qrValue = Math.random().toString(36).slice(-12).concat(
-    // Math.random().toString(36).slice(-12))
-    //{key: textDec, fromDesktop: true}
+    /*
+      Converting from a binary buffer to a string representation: 
+      https://nodejs.org/api/buffer.html#buffer_class_method_buffer_from_string_encoding 
+    */
+    const textDec = Buffer.from(aesKey).toString('base64')
+    console.log(textDec);
+  
     let state = {
       key: textDec,
       fromDesktop: true
@@ -61,10 +51,9 @@ class QrGenerator extends Component {
 
     return (
       <div>
-      <QrCode value={JSON.stringify(state)} size='200'/>
+        <QrCode value={JSON.stringify(state)} size='200'/>
       </div>
-    )
-
+    );
   }
 }
 

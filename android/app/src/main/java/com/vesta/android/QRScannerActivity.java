@@ -134,7 +134,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             //socket connection initiated when QR code is from the desktop
             if ((Boolean) result.get("fromDesktop")) {
 
-
                 //returns public key object from the shared pref
                 String pubKeySharedPref = KeyPairManager
                         .retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext());
@@ -143,8 +142,9 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 String symKey = result.getString("key");
 
                 try {
-                    KeyPairManager.encrypt(symKey, pubKeySharedPref);
-                    Log.i("EncPubKeyWithSymKey", KeyPairManager.encrypt(symKey, pubKeySharedPref));
+                    String encPubKeyWithSymKey = KeyPairManager.encrypt(symKey, pubKeySharedPref);
+                    Log.i("EncPubKeyWithSymKey", encPubKeyWithSymKey);
+                    new SocketConnection().sendMessage(encPubKeyWithSymKey);
                 } catch (KeyStoreException e) {
                     e.printStackTrace();
                 } catch (CertificateException e) {
@@ -166,10 +166,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 } catch (NoSuchProviderException e) {
                     e.printStackTrace();
                 }
-
-
-                Log.i("SocketConnection", "Establishing Socket Connection");
-                new SocketConnection().sendMessage("KUNAL IS SENDING A MESSAGE");
             }
             //otherwise, store the public key in the shared preferences for future reference
             //will retrieve it from shared pref when it has to be encrypted it QR code on Desktop
