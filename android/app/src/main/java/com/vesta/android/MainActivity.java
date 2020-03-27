@@ -26,6 +26,17 @@ import android.widget.TextView;
 import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidmads.library.qrgenearator.QRGEncoder;
+import androidmads.library.qrgenearator.QRGContents;
+
+import java.io.IOException;
+
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
+import java.io.IOException;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.vesta.android.model.KeyPairManager;
 
 import org.json.JSONException;
@@ -126,16 +137,17 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Log error", e.toString());
         }
     }
-    public void onLaunchQrActivity(View view){
-        Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
-        startActivity(intent);
+
+    public android.content.Context getContext() {
+        return this.getBaseContext();
     }
 
     public void onRegenerateKeyBtnClick(View view) {
         generateQr();
     }
-    
-    public android.content.Context getContext() {
-        return this.getBaseContext();
+
+    public void onLaunchQrActivity(View view){
+            Intent intent = new Intent(this.getApplicationContext(), QRScannerActivity.class);
+            startActivity(intent);
     }
 }

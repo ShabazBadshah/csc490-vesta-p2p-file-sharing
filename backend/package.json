@@ -2,10 +2,10 @@
   "name": "vesta-backend",
   "version": "1.0.0",
   "description": "The Vesta file sharing app backend",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
     "lint": "eslint --fix src",
     "test": "mocha -w"
   },
@@ -18,12 +18,16 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
+    "ecstatic": "^4.1.2",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
     "morgan": "^1.9.1",
-    "node-static": "^0.7.11",
+    "multer": "^1.4.2",
     "pg": "^7.18.1",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "socket.io-p2p-server": "^1.2.0",
+    "socket.io-stream": "^0.9.1",
+    "stream-browserify": "^2.0.2"
   },
   "devDependencies": {
     "eslint": "^6.8.0",

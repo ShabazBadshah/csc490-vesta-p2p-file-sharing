@@ -22,15 +22,20 @@ import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import 	java.security.KeyPairGenerator;
+import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Enumeration;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Class responsible for the creation and management of Public/Private key-pairs
@@ -113,21 +118,23 @@ public class KeyPairManager {
         //Convert the string public key to public key object
         try {
             publicKeyObject = KeyPairManager.convertBase64StringToPublicKey(publicKey);
+            System.out.println("MAAA PUB KEY OBJ " + publicKeyObject);
+            Log.i("PublicKeyObject", publicKeyObject.toString());
+            sharedPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
+            sharedPrefEditor = sharedPreferences.edit();
+
+            //Log.i("PublicKeyObject", publicKeyObject.toString());
+            System.out.println("MAAA PUB KEY OBJ** " + publicKeyObject);
+            //Storing the object representation, used toString() to bypass error
+            sharedPrefEditor.putString(PUBLIC_KEY, publicKeyObject.toString());
+
+            sharedPrefEditor.apply();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InvalidKeySpecException e) {
             e.printStackTrace();
         }
 
-        sharedPreferences =  context.getSharedPreferences(sharedPrefName, Context.MODE_PRIVATE);
-        sharedPrefEditor = sharedPreferences.edit();
-
-        Log.i("PublicKeyObject", publicKeyObject.toString());
-
-        //Storing the object representation, used toString() to bypass error
-        sharedPrefEditor.putString(PUBLIC_KEY, publicKeyObject.toString());
-
-        sharedPrefEditor.apply();
     }
 
 
@@ -139,6 +146,24 @@ public class KeyPairManager {
      * @return String, the string representation of the PublicKey requested, or the default value if the PublicKey string does not exist
      */
     public static String retrievePublicKeySharedPrefsFile(String sharedPrefsFileName, Context context) {
+
+        Log.i("Pub_Key_Shared_Pref",
+                context.getSharedPreferences(sharedPrefsFileName, Context.MODE_PRIVATE)
+                        .getString(PUBLIC_KEY, DEFAULT_VALUE_KEY_DOES_NOT_EXIST));
+        try {
+            Log.i("PubKeyFromKeyStore ", getKeyPairFromKeystore("userKeys").getPublic().toString());
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableEntryException e) {
+            e.printStackTrace();
+        }
+
         return context.getSharedPreferences(sharedPrefsFileName, Context.MODE_PRIVATE).getString(PUBLIC_KEY, DEFAULT_VALUE_KEY_DOES_NOT_EXIST);
     }
 
@@ -182,6 +207,11 @@ public class KeyPairManager {
         KeyStore keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
         keyStore.load(null);
 
+        System.out.println("ALIASSSESSSS");
+        for (Enumeration<String> e = keyStore.aliases(); e.hasMoreElements();) {
+            System.out.println(e.nextElement());
+        }
+
         PrivateKey privateKey = (PrivateKey) keyStore.getKey(keyPairAlias, null);
         PublicKey publicKey = keyStore.getCertificate(keyPairAlias).getPublicKey();
 
@@ -200,6 +230,7 @@ public class KeyPairManager {
      * https://stackoverflow.com/questions/45754277/how-to-generate-publickey-from-string-java
      */
     public static PublicKey convertBase64StringToPublicKey(String base64EncodedPublicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        Log.i("Converting Pub Key ", base64EncodedPublicKey);
         byte[] encodedPublicKey = Base64.decode(base64EncodedPublicKey, Base64.DEFAULT);
         return KeyFactory.getInstance(KeyProperties.KEY_ALGORITHM_RSA).generatePublic(new X509EncodedKeySpec(encodedPublicKey));
     }
@@ -227,11 +258,11 @@ public class KeyPairManager {
 
     /**
      * Encrypts data using the PublicKey associated with the keyPairAlias given
-     * @param keyPairAlias String, the alias of the KeyPair that will be used to encrypt the data given
+     * @param symKeyString String, our symKeyString which will be used to encrypt the pub key
      * @param stringToEncrypt String, the data that needs to be encrypted
      * @return String, dataToEncrypt encrypted using the keyPairAlias' PrivateKey
      */
-    public static String encrypt(String keyPairAlias, String stringToEncrypt) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, UnrecoverableEntryException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException {
+    public static String encrypt(String symKeyString, String stringToEncrypt) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, UnrecoverableEntryException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException {
 
         if (stringToEncrypt == null || stringToEncrypt.trim().length() == 0) {
             throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "encrypt()", "Illegal argument String:dataToEncrypt"));
@@ -239,9 +270,21 @@ public class KeyPairManager {
 
         keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
         keyStore.load(null);
+        System.out.println("HELLOOWEW " + symKeyString);
+        //convert sym key to an object, this is our secret
+        //used to encrypt the pub key since it is not encrypted yet, increase security
+        byte[] encodedKey = Base64.decode(symKeyString, Base64.DEFAULT);
+        System.out.println("THE LENGTHHHHH " + encodedKey.length);
+        SecretKey symKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
 
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround"); //or try with "RSA"
-        cipher.init(Cipher.ENCRYPT_MODE, getKeyPairFromKeystore(keyPairAlias).getPublic());
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding"); //or try with "RSA"
+
+        /*byte[] iv = new byte[12]; //NEVER REUSE THIS IV WITH SAME KEY
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(iv);
+        GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv);*/
+        cipher.init(Cipher.ENCRYPT_MODE, symKey);
+
         byte[] encrypted = cipher.doFinal(stringToEncrypt.getBytes(StandardCharsets.UTF_8));
 
         return Base64.encodeToString(encrypted, Base64.DEFAULT);

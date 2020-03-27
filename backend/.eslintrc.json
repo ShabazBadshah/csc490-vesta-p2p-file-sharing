@@ -85,7 +85,7 @@
     "padded-blocks": ["error", "never"],
     "quote-props": ["error", "consistent"],
     "quotes": ["error", "single", {"allowTemplateLiterals": true}],
-    "require-jsdoc": ["error", {
+    "require-jsdoc": ["warn", {
       "require": {
         "FunctionDeclaration": true,
         "MethodDefinition": true,
