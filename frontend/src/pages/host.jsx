@@ -9,7 +9,7 @@ var key = "key"
 //var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://048cb26e.ngrok.io");
+var socket = io("http://aca3bc85.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts)
 p2pSocket.on('peer-msg', function (data) {
@@ -20,7 +20,8 @@ p2pSocket.on('peer-msg', function (data) {
 p2pSocket.on('go-private', function () {
   p2pSocket.upgrade();
   // upgrade to peerConnection
-  privateClick();
+  // privateClick();
+  p2pSocket.useSockets = false;
 });  
 p2pSocket.on('peer-file', function (data) {
   var dec = crypto.createDecipher("aes-256-ctr",key).update(data.textVal,"hex","utf8");

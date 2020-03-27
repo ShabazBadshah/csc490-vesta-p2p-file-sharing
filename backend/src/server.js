@@ -18,19 +18,18 @@ socketIoServer.on('connection', socket => {
 
   socket.on('go-private', data => {
     socket.broadcast.emit('go-private', data);
-    console.log(`User connected: ${socket.id}`);
+    // console.log(`Going private: ${socket.id}`);
   });
 
   // Recieve file from client
   socket.on('peer-file', data => {
-    console.log('Message from peer-file: %s', data.textVal)
-    socket.broadcast.emit('peer-file', data)
+    console.log('Message from peer-file: %s', data.textVal);
+    socket.broadcast.emit('peer-file', data);
   });
-  socket.on('peer-msg', function (data) {
-    console.log('Message from peer-msg: %s', data.textVal)
-    socket.broadcast.emit('peer-msg', data)
-    
-  })
+  socket.on('peer-msg', function(data) {
+    console.log('Message from peer-msg: %s', data.textVal);
+    socket.broadcast.emit('peer-msg', data);
+  });
 
   socket.on('disconnect', () => console.log('one user disconnected', socket.id));
 });
