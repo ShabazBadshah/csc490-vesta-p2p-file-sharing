@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import QrCode from 'react.qrcode.generator';
 import Enigma from '@cubbit/enigma';
 
-var P2P = require('socket.io-p2p');
 var io = require('socket.io-client');
 var socket = io("http://a25ee7d4.ngrok.io");
 
@@ -52,10 +51,9 @@ class QrGenerator extends Component {
 
     return (
       <div>
-      <QrCode value={JSON.stringify(state)} size='200'/>
+        <QrCode value={JSON.stringify(state)} size='200'/>
       </div>
-    )
-
+    );
   }
 }
 

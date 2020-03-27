@@ -1,26 +1,19 @@
 import React, { Component } from 'react';
+
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardImg,
   CardBody,
-  CardFooter,
   Button,
-  Badge,
-  ButtonGroup,
-  ButtonToolbar,
   FormInput,
-  InputGroup,
-  Collapse,
   Nav, NavItem, NavLink
 } from "shards-react";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "shards-ui/dist/css/shards.min.css";
+
+
 /*
-
-The following component does simple navigation within the home host / recieve ui
-
+  The following component does simple navigation within the home host / recieve ui
 */
 
 class Navigation extends Component {
@@ -47,7 +40,7 @@ class Navigation extends Component {
       this.setState({[event.target.name]: event.target.value})
   }
 
-  render(){
+  render() {
 
     const hostingTab = this.state.hostingTab;
     const receivingTab = this.state.receivingTab;
@@ -77,13 +70,13 @@ class Navigation extends Component {
       rstyle = {color: "#905EAF", fontWeight: "bold", width: "210px", textDecoration: "underline"}
     }
 
-    else{
+    else {
       cardBody =  <div> </div>
       hstyle = {color: "grey", fontWeight: "bold", width: "210px"}
       rstyle = {color: "grey", fontWeight: "bold", width: "210px"}
     }
 
-    return (
+    return(
       <div className="App">
         <header className="App-header">
         <Card style={{position: "absolute", left:"80px", top:"150px"}}>
@@ -106,10 +99,8 @@ class Navigation extends Component {
         </Card>
         </header>
       </div>
-    )
-
-    }
-
+    );
   }
+}
 
 export default Navigation;
