@@ -1,14 +1,15 @@
 import React, { Component } from "react";
 import HostNav from '../components/hostNav';
 import Menu from '../components/menu';
+//import { createWriteStream } from fs;
 
 var P2P = require('socket.io-p2p');
 var ioStream = require('socket.io-stream');
 var key = "key"
-var fs = require('fs');
+//var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://a3d26d6f.ngrok.io");
+var socket = io("http://048cb26e.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts)
 p2pSocket.on('peer-msg', function (data) {
@@ -17,11 +18,23 @@ p2pSocket.on('peer-msg', function (data) {
   console.log('From a peer decrypted: %s', dec);
 });
 p2pSocket.on('go-private', function () {
-  p2pSocket.upgrade(); // upgrade to peerConnection
+  p2pSocket.upgrade();
+  // upgrade to peerConnection
   privateClick();
 });  
-ioStream(socket).on('file', (stream, data) => {
-  stream.pipe(fs.createWriteStream(data.filename));
+p2pSocket.on('peer-file', function (data) {
+  var dec = crypto.createDecipher("aes-256-ctr",key).update(data.textVal,"hex","utf8");
+  console.log('From a peer encrypted: %s', data.textVal);
+  console.log('From a peer decrypted: %s', dec);
+  var blob = new Blob([dec]);
+  var url = window.URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.setAttribute('hidden', '');
+  a.setAttribute('href', url);
+  a.setAttribute('download', data.filename);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 });
 const privateClick = () => {
   socket.emit('go-private', true);
@@ -44,14 +57,16 @@ class Host extends Component {
     this.fileInput = React.createRef();
   }
   sendFileClick(){
-    //   var socket = io.connect("http://691afa1c.ngrok.io");
-    ioStream.forceBase64 = true;
-    console.log("Uploading file...")
-    var file = this.fileInput.current.files[0];
-    var stream = ioStream.createStream();
-    ioStream(socket).emit('file', stream, { filename: "recieved-" + file.name });
-    ioStream.createBlobReadStream(file).pipe(stream);
-}
+      var reader = new FileReader();
+      var file = this.fileInput.current.files[0]
+      reader.readAsText(file);
+
+      reader.onload = function() {
+          var text = reader.result;
+          var enc = crypto.createCipher("aes-256-ctr",key).update(text,"utf-8","hex");
+          p2pSocket.emit('peer-file', {textVal : enc, filename : file.name});
+      };
+  }
 
 //const HostPage = () => {
 

@@ -22,9 +22,9 @@ socketIoServer.on('connection', socket => {
   });
 
   // Recieve file from client
-  ss(socket).on('file', (stream, data) => {
-    var streamOut = ss.createStream();
-    ss(socket).emit('file', streamOut, data);
+  socket.on('peer-file', data => {
+    console.log('Message from peer-file: %s', data.textVal)
+    socket.broadcast.emit('peer-file', data)
   });
   socket.on('peer-msg', function (data) {
     console.log('Message from peer-msg: %s', data.textVal)
