@@ -147,7 +147,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                     Log.i("EncPubKeyWithSymKey", encPubKeyWithSymKey);
                     String decPubKeyWithSymKey = KeyPairManager.decrypt("userKeys", encPubKeyWithSymKey);
                     Log.i("DecPubKeyWithSymKey", decPubKeyWithSymKey);
-
                     new SocketConnection().sendMessage(encPubKeyWithSymKey);
                 } catch (KeyStoreException e) {
                     e.printStackTrace();
