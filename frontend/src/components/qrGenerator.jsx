@@ -3,7 +3,7 @@ import QrCode from 'react.qrcode.generator';
 import Enigma from '@cubbit/enigma';
 
 var io = require('socket.io-client');
-var socket = io("http://31640a7d.ngrok.io");
+var socket = io("http://14b44bc1.ngrok.io");
 
 class QrGenerator extends Component {
  
