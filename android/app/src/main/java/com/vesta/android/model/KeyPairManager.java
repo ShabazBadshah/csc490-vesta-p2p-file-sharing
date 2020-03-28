@@ -264,6 +264,7 @@ public class KeyPairManager {
      */
     public static String encrypt(String symKeyString, String stringToEncrypt) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, UnrecoverableEntryException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException {
 
+        //the sym key is encrypted by the pub key
         if (stringToEncrypt == null || stringToEncrypt.trim().length() == 0) {
             throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "encrypt()", "Illegal argument String:dataToEncrypt"));
         }
@@ -289,7 +290,6 @@ public class KeyPairManager {
 
         return Base64.encodeToString(encrypted, Base64.DEFAULT);
     }
-
 
     /**
      * Decrypts data using the PrivateKey associated with the keyPairAlias given

@@ -7,7 +7,7 @@ var key = "key"
 //var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://31640a7d.ngrok.io");
+var socket = io("http://811d589c.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts);
 
