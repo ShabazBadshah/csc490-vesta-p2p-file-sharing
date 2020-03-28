@@ -143,7 +143,6 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 Log.i("SymKeyBase64 ", symKeyBase64);
 
                 try {
-
                     String encPubKeyWithSymKey = KeyPairManager.encrypt("userKeys", symKeyBase64);
                     Log.i("EncPubKeyWithSymKey", encPubKeyWithSymKey);
                     String decPubKeyWithSymKey = KeyPairManager.decrypt("userKeys", encPubKeyWithSymKey);
