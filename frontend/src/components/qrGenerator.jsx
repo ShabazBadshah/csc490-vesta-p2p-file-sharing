@@ -3,7 +3,7 @@ import QrCode from 'react.qrcode.generator';
 import Enigma from '@cubbit/enigma';
 
 var io = require('socket.io-client');
-var socket = io("http://14b44bc1.ngrok.io");
+var socket = io("http://c8028050.ngrok.io");
 
 class QrGenerator extends Component {
  
@@ -45,13 +45,14 @@ class QrGenerator extends Component {
   
     let state = {
       key: textDec,
+      fileTransferFlowState: "host",
       fromDesktop: true
     }
     console.log(state)
 
     return (
       <div>
-        <QrCode value={JSON.stringify(state)} size='200'/>
+        <QrCode value={JSON.stringify(state)} size='250'/>
       </div>
     );
   }
