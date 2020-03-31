@@ -13,7 +13,7 @@ const ReceivePage = () => {
   return (
     <div>
       <h1> Receive </h1>
-      <QrCode value={JSON.stringify(state)} size='250'/>
+      <QrCode value={JSON.stringify(state)} size='300'/>
     </div>
   );
 }

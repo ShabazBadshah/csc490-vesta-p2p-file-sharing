@@ -3,7 +3,7 @@ import QrCode from 'react.qrcode.generator';
 import Enigma from '@cubbit/enigma';
 
 var io = require('socket.io-client');
-var socket = io("http://c8028050.ngrok.io");
+var socket = io("http://26a9fecb.ngrok.io");
 
 class QrGenerator extends Component {
  
@@ -34,7 +34,7 @@ class QrGenerator extends Component {
       - https://github.com/cubbit/enigma
     */
 
-    const aesKey = Enigma.AES.create_key();
+    const aesKey = Enigma.AES.create_key(32);
 
     /*
       Converting from a binary buffer to a string representation: 

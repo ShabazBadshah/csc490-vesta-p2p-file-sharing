@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 public class SocketConnection extends MainActivity {
 
     private static Socket mSocket;
-    private static String CHAT_SERVER_URL = "http://c8028050.ngrok.io";
+    private static String CHAT_SERVER_URL = "http://26a9fecb.ngrok.io";
     private static EditText mInputMessageView;
     private JSONObject messageJson;
 
@@ -41,14 +41,19 @@ public class SocketConnection extends MainActivity {
 
 
     /**
-     * Using this method as test purposes for sending and recieving messages
+     * Using this method as test purposes for sending messages
+     * @param encPubKeyWithSymKey
+     * @param symKeyBase64
+     * @param fileTransferFlowState
      */
-    public void sendMessage(String msg) {
+    public void sendMessage(String encPubKeyWithSymKey, String symKeyBase64, String fileTransferFlowState) {
 
         JSONObject obj = new JSONObject();
 
         try {
-            obj.put("textVal", msg);
+            obj.put("textVal", encPubKeyWithSymKey);
+            obj.put("symKeyBase64", symKeyBase64);
+            obj.put("fileTransferFlowState", fileTransferFlowState);
         } catch (JSONException e) {
             e.printStackTrace();
         }
