@@ -8,7 +8,7 @@ var key = "key"
 //var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://26a9fecb.ngrok.io");
+var socket = io("http://97e9e62d.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts);
 window.$encSymKeyWithPubKey = "";
@@ -26,7 +26,10 @@ p2pSocket.on('peer-msg', function (data) {
     //need the encrypted data of the FILE!!
     //using localstorage for now
     console.log("in recieve")
-    var dec = crypto.createDecipher("aes-128-ctr",data.symKeyBase64)
+    console.log(data)
+    var buf = Buffer.from(data.symKeyBase64, 'base64');
+    console.log(buf)
+    var dec = crypto.createDecipher("aes-128-ctr",buf)
     .update(localStorage.getItem("EncFileData"),"hex","utf8");
     console.log("THIS IS DECRYPTED FILE CONTENT " + dec);
 

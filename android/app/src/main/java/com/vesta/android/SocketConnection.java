@@ -24,7 +24,7 @@ import java.net.URISyntaxException;
 public class SocketConnection extends MainActivity {
 
     private static Socket mSocket;
-    private static String CHAT_SERVER_URL = "http://26a9fecb.ngrok.io";
+    private static String CHAT_SERVER_URL = "http://97e9e62d.ngrok.io";
     private static EditText mInputMessageView;
     private JSONObject messageJson;
 
