@@ -1,7 +1,4 @@
 package com.vesta.android;
-import android.app.Activity;
-import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -10,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.vesta.android.implementation.view_impl.SplashScreenActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,13 +22,13 @@ import java.net.URISyntaxException;
 public class SocketConnection extends MainActivity {
 
     private static Socket mSocket;
-    private static String CHAT_SERVER_URL = "http://14b44bc1.ngrok.io";
     private static EditText mInputMessageView;
     private JSONObject messageJson;
 
     static {
         try {
-            mSocket = IO.socket(CHAT_SERVER_URL);
+            mSocket = IO.socket(SplashScreenActivity.P2P_SERVER_URL);
+            Log.i("SERVER_URL", SplashScreenActivity.P2P_SERVER_URL);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -41,14 +39,19 @@ public class SocketConnection extends MainActivity {
 
 
     /**
-     * Using this method as test purposes for sending and recieving messages
+     * Using this method as test purposes for sending messages
+     * @param encPubKeyWithSymKey
+     * @param symKeyBase64
+     * @param fileTransferFlowState
      */
-    public void sendMessage(String msg) {
+    public void sendMessage(String encPubKeyWithSymKey, String symKeyBase64, String fileTransferFlowState) {
 
         JSONObject obj = new JSONObject();
 
         try {
-            obj.put("textVal", msg);
+            obj.put("textVal", encPubKeyWithSymKey);
+            obj.put("symKeyBase64", symKeyBase64);
+            obj.put("fileTransferFlowState", fileTransferFlowState);
         } catch (JSONException e) {
             e.printStackTrace();
         }

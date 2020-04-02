@@ -37,6 +37,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.vesta.android.implementation.view_impl.SplashScreenActivity;
 import com.vesta.android.model.KeyPairManager;
 
 import org.json.JSONException;

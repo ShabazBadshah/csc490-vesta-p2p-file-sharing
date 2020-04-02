@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import android.provider.Settings.Secure;
 
 import com.google.zxing.Result;
+import com.vesta.android.implementation.view_impl.SplashScreenActivity;
 import com.vesta.android.model.KeyPairManager;
 
 import org.json.JSONException;
@@ -57,6 +58,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private static PeerConnection remotePeerConnection;
     private static DataChannel localDataChannel;
     private static  PeerConnection.Observer pcObserver;
+    private SocketConnection socketConnection = new SocketConnection();
     //private ActivitySampleDataChannelBinding binding;
 
 
@@ -125,6 +127,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             result = new JSONObject(rawResult.getText());
             System.out.println(result.get("fromDesktop") instanceof Boolean);
             Log.i("fromDesktop", result.get("fromDesktop").toString());
+            Log.i("fromDesktop", SplashScreenActivity.P2P_SERVER_URL);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -132,7 +135,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
 
         try {
             //socket connection initiated when QR code is from the desktop
-            if ((Boolean) result.get("fromDesktop")) {
+            if ((Boolean) result.get("fromDesktop") && result.get("fileTransferFlowState").equals("host")) {
 
                 //returns public key object from the shared pref
                 String pubKeySharedPref = KeyPairManager
@@ -147,7 +150,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                     Log.i("EncPubKeyWithSymKey", encPubKeyWithSymKey);
                     String decPubKeyWithSymKey = KeyPairManager.decrypt("userKeys", encPubKeyWithSymKey);
                     Log.i("DecPubKeyWithSymKey", decPubKeyWithSymKey);
-                    new SocketConnection().sendMessage(encPubKeyWithSymKey);
+                    socketConnection.sendMessage(encPubKeyWithSymKey, symKeyBase64, "host");
                 } catch (KeyStoreException e) {
                     e.printStackTrace();
                 } catch (CertificateException e) {
@@ -169,6 +172,41 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 } catch (NoSuchProviderException e) {
                     e.printStackTrace();
                 }
+            }
+            else if ((Boolean) result.get("fromDesktop") && result.get("fileTransferFlowState").equals("recieve")) {
+
+                //encSymKeyBase64
+                String encSymKeyPubKeyBase64 = result.getString("key");
+                Log.i("encSymKeyBase64", encSymKeyPubKeyBase64);
+
+                //need to use the private key to decrypt the encSymKeyBase64
+                try {
+                    String symKey = KeyPairManager.decrypt("userKeys", encSymKeyPubKeyBase64);
+                    Log.i("symKey", symKey);
+                    //now we send back symkey to the reciever
+                    socketConnection.sendMessage(encSymKeyPubKeyBase64, symKey, "recieve");
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (CertificateException e) {
+                    e.printStackTrace();
+                } catch (UnrecoverableEntryException e) {
+                    e.printStackTrace();
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
             //otherwise, store the public key in the shared preferences for future reference
             //will retrieve it from shared pref when it has to be encrypted it QR code on Desktop

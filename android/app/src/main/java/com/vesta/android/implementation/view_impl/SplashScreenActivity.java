@@ -35,15 +35,22 @@ public class SplashScreenActivity extends AppCompatActivity implements SplashScr
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
-
+    public static String P2P_SERVER_URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-        startActivity(intent);
+        Intent startMainActivityIntent = new Intent(SplashScreenActivity.this, MainActivity.class);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            P2P_SERVER_URL = extras.getString("P2P_SERVER_URL");
+            System.out.println("GOT IT");
+        }
+
+        startActivity(startMainActivityIntent);
         finish();
 
         // if (isBiometricAuthAvailable()) {
