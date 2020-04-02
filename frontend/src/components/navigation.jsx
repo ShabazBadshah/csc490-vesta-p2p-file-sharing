@@ -70,14 +70,14 @@ class Navigation extends Component {
 
     else if (receivingTab){
       cardBody = <div>
-      <h style={{color: "black", fontSize: "14px", position: "absolute", width: "400px", top: "50px", left: "10px"}}>
+      {/* <h style={{color: "black", fontSize: "14px", position: "absolute", width: "400px", top: "50px", left: "10px"}}>
          &bull; Enter the shared link to navigate to the location of your requested stream
       </h>
       <h style={{color: "black", fontSize: "14px", position: "absolute", width: "400px", left: "10px"}}>
         &bull; To learn more click on the privacy and help tabs for additional info
-      </h>
+      </h> */}
       <br/>
-      <FormInput placeholder="Enter Link" id='rname' name='rinput' onChange={this.rinputRequest} className="mb-2" style={{width: "360px", borderColor: "#905EAF"}}/>
+      {/* <FormInput placeholder="Enter Link" id='rname' name='rinput' onChange={this.rinputRequest} className="mb-2" style={{width: "360px", borderColor: "#905EAF"}}/> */}
       <a href={'/receive/'+ rInput}>
         <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Go </Button>
       </a>
