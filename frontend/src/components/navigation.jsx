@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import {
   Card,
   CardBody,
+  CardTitle,
   Button,
   FormInput,
   Nav, NavItem, NavLink
@@ -52,6 +53,13 @@ class Navigation extends Component {
     if (hostingTab){
       cardBody =
       <div>
+        <h style={{color: "black", fontSize: "14px", position: "absolute", width: "400px", top: "50px", left: "10px"}}>
+           &bull; By clicking 'Ready to Host' you will enter the host page where you can start the steps of secure file transferring
+        </h>
+        <h style={{color: "black", fontSize: "14px", position: "absolute", width: "400px", left: "10px"}}>
+          &bull; To learn more click on the privacy and help tabs for additional info
+        </h>
+        <br/>
         <a href="/host">
           <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Ready to Host </Button>
         </a>
@@ -61,7 +69,15 @@ class Navigation extends Component {
     }
 
     else if (receivingTab){
-      cardBody = <div> <FormInput placeholder="Enter Link" id='rname' name='rinput' onChange={this.rinputRequest} className="mb-2" style={{width: "360px", borderColor: "#905EAF"}}/>
+      cardBody = <div>
+      <h style={{color: "black", fontSize: "14px", position: "absolute", width: "400px", top: "50px", left: "10px"}}>
+         &bull; Enter the shared link to navigate to the location of your requested stream
+      </h>
+      <h style={{color: "black", fontSize: "14px", position: "absolute", width: "400px", left: "10px"}}>
+        &bull; To learn more click on the privacy and help tabs for additional info
+      </h>
+      <br/>
+      <FormInput placeholder="Enter Link" id='rname' name='rinput' onChange={this.rinputRequest} className="mb-2" style={{width: "360px", borderColor: "#905EAF"}}/>
       <a href={'/receive/'+ rInput}>
         <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> Go </Button>
       </a>
@@ -88,7 +104,7 @@ class Navigation extends Component {
            </NavItem>
            <NavItem>
              <NavLink active href="#" onClick={this.receivingClick}  style={rstyle}>
-               Recieve
+               Receive
              </NavLink>
            </NavItem>
          </Nav>
