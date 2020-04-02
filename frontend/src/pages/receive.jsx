@@ -4,6 +4,7 @@ import QrCode from 'react.qrcode.generator';
 
 const ReceivePage = () => {
 
+  console.log("ReceivePage EncSymKeyWithPubKey : " + localStorage.getItem("EncSymKeyWithPubKey"))
   let state = {
     key: localStorage.getItem("EncSymKeyWithPubKey"),
     fileTransferFlowState: "recieve",

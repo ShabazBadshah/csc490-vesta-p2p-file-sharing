@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import HostNav from '../components/hostNav';
+import qrGenerator from '../components/qrGenerator';
 import Menu from '../components/menu';
 import { useState } from "react";
 
@@ -8,7 +9,7 @@ var key = "key"
 //var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://97e9e62d.ngrok.io");
+var socket = io("http://c106114b.ngrok.io");
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts);
 window.$encSymKeyWithPubKey = "";
@@ -16,8 +17,11 @@ window.$symKeyBase64 = "";
 
 p2pSocket.on('peer-msg', function (data) {
   
-  window.$encSymKeyWithPubKey = data.textVal;
-  window.$symKeyBase64 = data.symKeyBase64;
+  if (data.fileTransferFlowState == "host") {
+    console.log("WENT TO PEER MSG/HOST iF")
+    window.$encSymKeyWithPubKey = data.textVal;
+    window.$symKeyBase64 = data.symKeyBase64;
+  }
   //localStorage.setItem("EncSymKeyWithPubKey", data.textVal)
 
   //coming from the recieve
@@ -27,10 +31,25 @@ p2pSocket.on('peer-msg', function (data) {
     //using localstorage for now
     console.log("in recieve")
     console.log(data)
-    var buf = Buffer.from(data.symKeyBase64, 'base64');
-    console.log(buf)
-    var dec = crypto.createDecipher("aes-128-ctr",buf)
-    .update(localStorage.getItem("EncFileData"),"hex","utf8");
+   // var buf = Buffer.from(data.symKeyBase64, 'base64');
+    //console.log(buf)
+    //Buffer.from("SGVsbG8gV29ybGQ=", 'base64').toString('ascii')
+    console.log("decrypting file data: " + localStorage.getItem("EncFileData") + "with key: " + data.symKeyBase64)
+    var dec = crypto.createDecipher("aes-128-ctr",data.symKeyBase64)
+    .update(localStorage.getItem("EncFileData"), "hex","utf-8");
+    console.log("decrypting file data: " + localStorage.getItem("EncFileData") + "with key: " + data.symKeyBase64)
+    console.log('From a peer recieve encrypted: %s', data.textVal);
+    console.log('From a peer recieve decrypted: %s', dec);
+    console.log(data)
+    var blob = new Blob([dec]);
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', data.filename);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     console.log("THIS IS DECRYPTED FILE CONTENT " + dec);
 
   }
@@ -55,21 +74,10 @@ p2pSocket.on('peer-file', function (data) {
   //send this to recieve.jsx
   localStorage.setItem("EncSymKeyWithPubKey", data.encSymKeyWithPubKey)
   localStorage.setItem("EncFileData", data.textVal)
+  console.log("data.encSymKeyWithPubKey peer-file " + data.encSymKeyWithPubKey)
 
-
-  var dec = crypto.createDecipher("aes-128-ctr",localStorage.getItem("EncSymKeyWithPubKey")).update(data.textVal,"hex","utf8");
-  console.log('From a peer recieve encrypted: %s', data.textVal);
-  console.log('From a peer recieve decrypted: %s', dec);
-  console.log(data)
-  var blob = new Blob([dec]);
-  var url = window.URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.setAttribute('hidden', '');
-  a.setAttribute('href', url);
-  a.setAttribute('download', data.filename);
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+  //var dec = crypto.createDecipher("aes-128-ctr",localStorage.getItem("EncSymKeyWithPubKey")).update(data.textVal,"hex","utf8");
+  
 });
 
 const privateClick = () => {
@@ -102,12 +110,16 @@ class Host extends Component {
       console.log(reader)
       reader.onload = function() {
           var text = reader.result;
-          console.log(window.$encSymKeyWithPubKey)
+          console.log("SEND FILE CLICK " + window.$encSymKeyWithPubKey)
 
           //enc is the encrypted file data with the encSymKeyWithPubKey
           //passing in the encSymKeyWithPubKey to the recievers side
           //will use encSymKeyWithPubKey to generate QR code
-          var enc = crypto.createCipher("aes-128-ctr", window.$encSymKeyWithPubKey).update(text,"utf-8","hex");
+          //Buffer.from(this.aesKey).toString('base64')
+          //Buffer.from(this.aesKey).toString('base64')
+          console.log("encrypting file data: " + text + "with key: " + Buffer.from(localStorage.getItem("browserSymKey")).toString('base64'))
+
+          var enc = crypto.createCipher("aes-128-ctr",  Buffer.from(localStorage.getItem("browserSymKey")).toString('base64')).update(text,"utf-8","hex");
           p2pSocket.emit('peer-file', {textVal : enc, filename : file.name, encSymKeyWithPubKey : window.$encSymKeyWithPubKey});
       }
   }

@@ -57,6 +57,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
     private static PeerConnection remotePeerConnection;
     private static DataChannel localDataChannel;
     private static  PeerConnection.Observer pcObserver;
+    private SocketConnection socketConnection = new SocketConnection();
     //private ActivitySampleDataChannelBinding binding;
 
 
@@ -147,7 +148,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                     Log.i("EncPubKeyWithSymKey", encPubKeyWithSymKey);
                     String decPubKeyWithSymKey = KeyPairManager.decrypt("userKeys", encPubKeyWithSymKey);
                     Log.i("DecPubKeyWithSymKey", decPubKeyWithSymKey);
-                    new SocketConnection().sendMessage(encPubKeyWithSymKey, symKeyBase64, "host");
+                    socketConnection.sendMessage(encPubKeyWithSymKey, symKeyBase64, "host");
                 } catch (KeyStoreException e) {
                     e.printStackTrace();
                 } catch (CertificateException e) {
@@ -181,7 +182,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                     String symKey = KeyPairManager.decrypt("userKeys", encSymKeyPubKeyBase64);
                     Log.i("symKey", symKey);
                     //now we send back symkey to the reciever
-                    new SocketConnection().sendMessage(encSymKeyPubKeyBase64, symKey, "recieve");
+                    socketConnection.sendMessage(encSymKeyPubKeyBase64, symKey, "recieve");
                 } catch (NoSuchPaddingException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
