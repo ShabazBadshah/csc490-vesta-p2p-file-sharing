@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import HostNav from '../components/hostNav';
 import qrGenerator from '../components/qrGenerator';
+import BackImage from '../backimg.png';
 import Menu from '../components/menu';
 import { useState } from "react";
 
@@ -129,16 +130,11 @@ class Host extends Component {
   render() {
     return (
       <div>
+        <img src={BackImage} width="650" height="450" align="right" alight="bottom" style={{position: "absolute", bottom: 0, right: 0}}/>
         <HostNav/>
-        {/* <Menu> </Menu> */}
-        <input id="submitText" type="text"/>
-        <button type="submit" onClick={submitClick}> Submit </button>
-        <button id="privateButton" type="submit" onClick={privateClick}>Private</button>
-        <button id="sendFileButton" type="submit" onClick={(e) => this.sendFileClick(e)}>SendFile</button>
-        <input id="file" type="file" ref={this.fileInput}/>
+        <Menu> </Menu>
       </div>
     );
-  }
-}
+};
 
-export default Host;
+export default HostPage;
