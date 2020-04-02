@@ -4,6 +4,7 @@
 
 .idea/codeStyles/Project.xml
 .vscode/
+tunnels.json
 
 # Built application files
 *.apk
