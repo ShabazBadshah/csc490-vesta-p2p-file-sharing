@@ -1,7 +1,4 @@
 package com.vesta.android;
-import android.app.Activity;
-import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
 
@@ -10,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.vesta.android.implementation.view_impl.SplashScreenActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,13 +22,14 @@ import java.net.URISyntaxException;
 public class SocketConnection extends MainActivity {
 
     private static Socket mSocket;
-    private static String CHAT_SERVER_URL = "http://c106114b.ngrok.io";
+//    private static String P2P_SERVER_URL = Main;
     private static EditText mInputMessageView;
     private JSONObject messageJson;
 
     static {
         try {
-            mSocket = IO.socket(CHAT_SERVER_URL);
+            mSocket = IO.socket(SplashScreenActivity.P2P_SERVER_URL);
+            Log.i("SERVER_URL", SplashScreenActivity.P2P_SERVER_URL);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

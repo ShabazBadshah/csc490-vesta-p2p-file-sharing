@@ -37,6 +37,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.vesta.android.implementation.view_impl.SplashScreenActivity;
 import com.vesta.android.model.KeyPairManager;
 
 import org.json.JSONException;
@@ -80,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
 
         qrImage = findViewById(R.id.publicKeyQrImgView);
         regenerateKeyBtn = findViewById(R.id.regenerateKeyBtn);
+
+        TextView tv = findViewById(R.id.vestaAppNameTxtView);
+        tv.setText(SplashScreenActivity.P2P_SERVER_URL);
 
         scanQrBtn = findViewById(R.id.scanQrBtn);
 

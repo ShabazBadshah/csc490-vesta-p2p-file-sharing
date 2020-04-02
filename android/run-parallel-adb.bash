@@ -1,0 +1,1 @@
+adb devices | egrep '\t(device|emulator)' | cut -f 1 | xargs -t -J% -n1 -P5 adb -s % "$@"

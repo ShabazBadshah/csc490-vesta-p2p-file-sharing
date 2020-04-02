@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import android.provider.Settings.Secure;
 
 import com.google.zxing.Result;
+import com.vesta.android.implementation.view_impl.SplashScreenActivity;
 import com.vesta.android.model.KeyPairManager;
 
 import org.json.JSONException;
@@ -126,6 +127,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             result = new JSONObject(rawResult.getText());
             System.out.println(result.get("fromDesktop") instanceof Boolean);
             Log.i("fromDesktop", result.get("fromDesktop").toString());
+            Log.i("fromDesktop", SplashScreenActivity.P2P_SERVER_URL);
         } catch (JSONException e) {
             e.printStackTrace();
         }
