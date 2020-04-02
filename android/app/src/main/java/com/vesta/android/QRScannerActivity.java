@@ -139,11 +139,14 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                         .retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext());
 
                 //encrypt public key in shared pref with the sym key in the result
-                String symKey = result.getString("key");
+                String symKeyBase64 = result.getString("key");
+                Log.i("SymKeyBase64 ", symKeyBase64);
 
                 try {
-                    String encPubKeyWithSymKey = KeyPairManager.encrypt(symKey, pubKeySharedPref);
+                    String encPubKeyWithSymKey = KeyPairManager.encrypt("userKeys", symKeyBase64);
                     Log.i("EncPubKeyWithSymKey", encPubKeyWithSymKey);
+                    String decPubKeyWithSymKey = KeyPairManager.decrypt("userKeys", encPubKeyWithSymKey);
+                    Log.i("DecPubKeyWithSymKey", decPubKeyWithSymKey);
                     new SocketConnection().sendMessage(encPubKeyWithSymKey);
                 } catch (KeyStoreException e) {
                     e.printStackTrace();

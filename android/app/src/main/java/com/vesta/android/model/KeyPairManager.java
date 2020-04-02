@@ -1,28 +1,26 @@
 package com.vesta.android.model;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import android.content.SharedPreferences;
-import android.util.Log;
-
 import java.security.Key;
 import java.security.KeyFactory;
-import java.security.KeyStore;
 import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import 	java.security.KeyPairGenerator;
-import java.security.SecureRandom;
 import java.security.UnrecoverableEntryException;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
@@ -33,9 +31,6 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Class responsible for the creation and management of Public/Private key-pairs
@@ -169,7 +164,7 @@ public class KeyPairManager {
 
 
     /**
-     * Removes the public key stored in shared preferences
+     * Removes PublicKey stored in SharedPreferences
      */
     public static void removePublicKeySharedPref() {
         sharedPrefEditor = sharedPreferences.edit();
@@ -258,11 +253,11 @@ public class KeyPairManager {
 
     /**
      * Encrypts data using the PublicKey associated with the keyPairAlias given
-     * @param symKeyString String, our symKeyString which will be used to encrypt the pub key
+     * @param keyPairAlias String, the alias of the KeyPair that will be used to encrypt the data given
      * @param stringToEncrypt String, the data that needs to be encrypted
      * @return String, dataToEncrypt encrypted using the keyPairAlias' PrivateKey
      */
-    public static String encrypt(String symKeyString, String stringToEncrypt) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, UnrecoverableEntryException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException {
+    public static String encrypt(String keyPairAlias, String stringToEncrypt) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, BadPaddingException, IllegalBlockSizeException, UnrecoverableEntryException, NoSuchPaddingException, InvalidKeyException, NoSuchProviderException {
 
         if (stringToEncrypt == null || stringToEncrypt.trim().length() == 0) {
             throw new IllegalArgumentException(String.format("%s[%s]: %s", KeyPair.class.getSimpleName(), "encrypt()", "Illegal argument String:dataToEncrypt"));
@@ -270,26 +265,13 @@ public class KeyPairManager {
 
         keyStore = KeyStore.getInstance(KEY_STORE_PROVIDER_NAME);
         keyStore.load(null);
-        System.out.println("HELLOOWEW " + symKeyString);
-        //convert sym key to an object, this is our secret
-        //used to encrypt the pub key since it is not encrypted yet, increase security
-        byte[] encodedKey = Base64.decode(symKeyString, Base64.DEFAULT);
-        System.out.println("THE LENGTHHHHH " + encodedKey.length);
-        SecretKey symKey = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
 
-        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding"); //or try with "RSA"
-
-        /*byte[] iv = new byte[12]; //NEVER REUSE THIS IV WITH SAME KEY
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(iv);
-        GCMParameterSpec parameterSpec = new GCMParameterSpec(128, iv);*/
-        cipher.init(Cipher.ENCRYPT_MODE, symKey);
-
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidKeyStoreBCWorkaround"); //or try with "RSA"
+        cipher.init(Cipher.ENCRYPT_MODE, getKeyPairFromKeystore(keyPairAlias).getPublic());
         byte[] encrypted = cipher.doFinal(stringToEncrypt.getBytes(StandardCharsets.UTF_8));
 
         return Base64.encodeToString(encrypted, Base64.DEFAULT);
     }
-
 
     /**
      * Decrypts data using the PrivateKey associated with the keyPairAlias given
