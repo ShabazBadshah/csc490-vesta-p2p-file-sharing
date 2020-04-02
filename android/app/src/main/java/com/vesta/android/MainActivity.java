@@ -82,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
         qrImage = findViewById(R.id.publicKeyQrImgView);
         regenerateKeyBtn = findViewById(R.id.regenerateKeyBtn);
 
-        TextView tv = findViewById(R.id.vestaAppNameTxtView);
-        tv.setText(SplashScreenActivity.P2P_SERVER_URL);
-
         scanQrBtn = findViewById(R.id.scanQrBtn);
 
         generateQr();
