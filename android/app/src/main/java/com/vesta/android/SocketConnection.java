@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 public class SocketConnection extends MainActivity {
 
     private static Socket mSocket;
-//    private static String P2P_SERVER_URL = Main;
     private static EditText mInputMessageView;
     private JSONObject messageJson;
 
