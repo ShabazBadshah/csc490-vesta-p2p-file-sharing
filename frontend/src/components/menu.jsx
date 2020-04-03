@@ -52,10 +52,10 @@ class Menu extends Component {
       cardBody = <span style={{position:"absolute", left:"150px"}}>
       <br/>
       <a href="https://shabazbadshah.com/">
-      <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> <b> Google Play </b> 📱 </Button>
+      {/* <Button theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}}> <b> Google Play </b> 📱 </Button> */}
       </a>
       </span>
-      cardTitle = <h5> Download the app to start sharing files securly </h5>
+      // cardTitle = <h5> Download the app to start sharing files securly </h5>
       theButtons = <div>
       <Button theme="light" style={{color: "#905EAF", position: "absolute", right:"350px", top:"20px", fontWeight: "bold", width: "100px", border: "none", backgroundColor: "inherit", textDecoration: "underline"}} onClick={this.homeAct}> Home </Button>
       <Button theme="light" style={{color: "#905EAF", position: "absolute", right:"240px", top:"20px", fontWeight: "bold", width: "100px", border: "none", backgroundColor: "inherit"}} onClick={this.privacyAct}> Privacy </Button>

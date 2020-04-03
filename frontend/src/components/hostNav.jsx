@@ -11,20 +11,58 @@ import "shards-ui/dist/css/shards.min.css";
 import QrGenerator from './qrGenerator';
 
 var P2P = require('socket.io-p2p');
-var key = "key"
-//var fs = require('fs');
 var crypto = require('crypto')
 var io = require('socket.io-client');
-var socket = io("http://31640a7d.ngrok.io");
+var socket = io(process.env.REACT_APP_NGROK_URL);
 var opts = {autoUpgrade: false, numClients: 10};
 var p2pSocket = new P2P(socket, opts);
+window.$encSymKeyWithPubKey = "";
+window.$symKeyBase64 = "";
 
 p2pSocket.on('peer-msg', function (data) {
-  var dec = crypto.createDecipher("aes-256-ctr",key).update(data.textVal,"hex","utf8");
+  
+  if (data.fileTransferFlowState == "host") {
+    console.log("WENT TO PEER MSG/HOST iF")
+    window.$encSymKeyWithPubKey = data.textVal;
+    window.$symKeyBase64 = data.symKeyBase64;
+  }
+  //localStorage.setItem("EncSymKeyWithPubKey", data.textVal)
+
+  //coming from the recieve
+  if (data.fileTransferFlowState == "recieve") {
+    if (data.textVal == localStorage.getItem("EncSymKeyWithPubKey")) {
+      //now we have to decrypt the data based on the symKey
+      //need the encrypted data of the FILE!!
+      //using localstorage for now
+      console.log("in recieve")
+      console.log(data)
+    // var buf = Buffer.from(data.symKeyBase64, 'base64');
+      //console.log(buf)
+      //Buffer.from("SGVsbG8gV29ybGQ=", 'base64').toString('ascii')
+      console.log("decrypting file data: " + localStorage.getItem("EncFileData") + "with key: " + data.symKeyBase64)
+      var dec = crypto.createDecipher("aes-128-ctr",data.symKeyBase64)
+      .update(localStorage.getItem("EncFileData"), "hex","utf-8");
+      console.log("decrypting file data: " + localStorage.getItem("EncFileData") + "with key: " + data.symKeyBase64)
+      console.log('From a peer recieve encrypted: %s', data.textVal);
+      console.log('From a peer recieve decrypted: %s', dec);
+      console.log(data)
+      var blob = new Blob([dec]);
+      var url = window.URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', data.filename);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      console.log("THIS IS DECRYPTED FILE CONTENT " + dec);
+    }
+  }
+
+
   console.log('From a peer encrypted: %s', data.textVal);
   console.log('From a peer decrypted: %s', dec);
 });
-
 p2pSocket.on('go-private', function () {
   p2pSocket.upgrade();
   console.log("going private");
@@ -34,19 +72,16 @@ p2pSocket.on('go-private', function () {
 });
 
 p2pSocket.on('peer-file', function (data) {
-  var dec = crypto.createDecipher("aes-256-ctr",key).update(data.textVal,"hex","utf8");
-  console.log('From a peer encrypted: %s', data.textVal);
-  console.log('From a peer decrypted: %s', dec);
-  console.log(data)
-  var blob = new Blob([dec]);
-  var url = window.URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.setAttribute('hidden', '');
-  a.setAttribute('href', url);
-  a.setAttribute('download', data.filename);
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+
+  //decrypting on recievers side
+  //generate QR code from data.encSymKeyWithPubKey
+  //send this to recieve.jsx
+  localStorage.setItem("EncSymKeyWithPubKey", data.encSymKeyWithPubKey)
+  localStorage.setItem("EncFileData", data.textVal)
+  console.log("data.encSymKeyWithPubKey peer-file " + data.encSymKeyWithPubKey)
+
+  //var dec = crypto.createDecipher("aes-128-ctr",localStorage.getItem("EncSymKeyWithPubKey")).update(data.textVal,"hex","utf8");
+  
 });
 
 const privateClick = () => {
@@ -55,34 +90,41 @@ const privateClick = () => {
   p2pSocket.useSockets = false;
 }
 
-const submitClick = () => {
-  var text = document.getElementById("submitText").value;
-  var enc = crypto.createCipher("aes-256-ctr",key).update(text,"utf-8","hex");
-  p2pSocket.emit('peer-msg', {textVal : enc});
-  console.log("IT CLICKED")
-}
-
 class HostNav extends Component {
 
   constructor(props) {
     super(props)
     this.sendFileClick = this.sendFileClick.bind(this);
     this.fileInput = React.createRef();
-    this.state = {streamButtonOn : true, qrOn : false}
+    this.state = {streamButtonOn : true, qrOn : true}
   }
 
   sendFileClick() {
-      var reader = new FileReader();
+    privateClick();
+    var reader = new FileReader();
       console.log(this.fileInput)
       var file = this.fileInput.current.files[0]
       reader.readAsText(file);
       console.log(reader)
       reader.onload = function() {
           var text = reader.result;
-          var enc = crypto.createCipher("aes-256-ctr",key).update(text,"utf-8","hex");
-          p2pSocket.emit('peer-file', {textVal : enc, filename : file.name});
+          console.log("SEND FILE CLICK " + window.$encSymKeyWithPubKey)
+          console.log("encrypting file data: " + text + "with key: " + Buffer.from(localStorage.getItem("browserSymKey")).toString('base64'))
+
+          var enc = crypto.createCipher("aes-128-ctr",  Buffer.from(localStorage.getItem("browserSymKey")).toString('base64')).update(text,"utf-8","hex");
+          p2pSocket.emit('peer-file', {textVal : enc, filename : file.name, encSymKeyWithPubKey : window.$encSymKeyWithPubKey});
       }
-      this.setState({qrOn : true})
+          // var reader = new FileReader();
+      // console.log(this.fileInput)
+      // var file = this.fileInput.current.files[0]
+      // reader.readAsText(file);
+      // console.log(reader)
+      // reader.onload = function() {
+      //     var text = reader.result;
+      //     var enc = crypto.createCipher("aes-256-ctr",key).update(text,"utf-8","hex");
+      //     p2pSocket.emit('peer-file', {textVal : enc, filename : file.name});
+      // }
+      //this.setState({qrOn : false})
   }
 
   isDisabled(e){
@@ -99,6 +141,7 @@ class HostNav extends Component {
   }
 
   render() {
+    
     const streamButtonOn = this.state.streamButtonOn;
     const qrOn = this.state.qrOn;
 
@@ -125,10 +168,11 @@ class HostNav extends Component {
 
         <Card style={{position: "absolute", left:"80px", top:"150px", width: "500px"}}>
           <CardBody>
-              <input id="file" type="file" ref={this.fileInput} onChange={(e) => this.isDisabled(e)} />
+              {/* <input id="file" type="file" ref={this.fileInput} onChange={(e) => this.isDisabled(e)} /> */}
+              <input id="file" type="file" theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF", borderRadius: "5px", borderStyle: 'outset'}} ref={this.fileInput} onChange={(e) => this.isDisabled(e)} />
               <br/>
               <br/>
-              <Button id="sendFileButton" theme="light" style={{color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}} disabled={streamButtonOn} onClick={(e) => this.sendFileClick(e)}> Stream </Button>
+              <Button id="sendFileButton" theme="light" style={{textDecoration: 'none', color: 'white', borderColor: "#905EAF", backgroundColor: "#905EAF"}} disabled={streamButtonOn} onClick={(e) => this.sendFileClick(e)}> Send File </Button>
             <br/>
             <br/>
             {hostBody}

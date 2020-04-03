@@ -27,8 +27,8 @@ public class SocketConnection extends MainActivity {
 
     static {
         try {
-            mSocket = IO.socket(SplashScreenActivity.P2P_SERVER_URL);
-            Log.i("SERVER_URL", SplashScreenActivity.P2P_SERVER_URL);
+            mSocket = IO.socket("http://62ba76cc.ngrok.io");
+//            Log.i("SERVER_URL", SplashScreenActivity.P2P_SERVER_URL);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

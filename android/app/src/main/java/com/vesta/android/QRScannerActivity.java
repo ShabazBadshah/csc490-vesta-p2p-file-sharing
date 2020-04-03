@@ -127,7 +127,7 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
             result = new JSONObject(rawResult.getText());
             System.out.println(result.get("fromDesktop") instanceof Boolean);
             Log.i("fromDesktop", result.get("fromDesktop").toString());
-            Log.i("fromDesktop", SplashScreenActivity.P2P_SERVER_URL);
+           //Log.i("fromDesktop", SplashScreenActivity.P2P_SERVER_URL);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -146,6 +146,23 @@ public class QRScannerActivity extends AppCompatActivity implements ZXingScanner
                 Log.i("SymKeyBase64 ", symKeyBase64);
 
                 try {
+//                  FOR DEMO PURPOSES, SINCE WE DON'T HAVE ACCESS TO 2 ANDROID PHONE, A AND B ARE BOTH PHONES
+                    /*
+                        We don't have 2 android devices because Coronavirus. So we are using the SAME phone for acting as User A and acting as User B
+                        If we were to implement with 2 phones, the following would happen
+
+                        ENCRYPTING WITH B PUB KEY ON A PHONE
+
+                        String userBbase64PubKey = KeyPairManager.retrievePublicKeySharedPrefsFile(SHARED_PREFERENCES,this.getBaseContext());
+                        PublicKey userBpubKey = KeyPairManager.convertBase64StringToPublicKey(userBbase64PubKey);
+                        String encryptedTxt = KeyPairManager.encrypt(userBpubKey);
+
+                        DECRYPTING WITH B PRIV KEY ON B PHONE
+
+                        String decryptedTxt = KeyPairManager.decrypt("userKeys", textToDecrypt);
+
+                     */
+
                     String encPubKeyWithSymKey = KeyPairManager.encrypt("userKeys", symKeyBase64);
                     Log.i("EncPubKeyWithSymKey", encPubKeyWithSymKey);
                     String decPubKeyWithSymKey = KeyPairManager.decrypt("userKeys", encPubKeyWithSymKey);
