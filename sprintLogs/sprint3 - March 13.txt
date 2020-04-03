@@ -1,0 +1,22 @@
+Done
+- Test Jira integration with GitHub repo
+- Generate public/private key on Android device
+- Generate an encryption public/private key pair
+- Basic web page template 
+- Random QR Generator for web
+- Basic web app front-end completed
+- Transfer public key from one Android phone to another
+- WebRTC Investigations
+- Key transfer between phone and computer
+
+In Progress
+- Ngrok investigations
+- P2P Socket.io investigations
+
+Selected for next development
+- File transfer between computers
+
+Backlog
+- File encryption 
+- File transfer between computers
+- Securely Receive files on computer
