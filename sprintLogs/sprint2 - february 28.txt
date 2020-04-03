@@ -1,0 +1,19 @@
+*Reminder: This was the week after Reading week so we had a lot of exams and assignments due, so we put off this project for a bit
+and carried over the tasks at hand to the following week *
+
+Done
+- Basic web app front-end completed
+- Transfer public key from one Android phone to another
+
+In Progress
+- WebRTC Investigations
+
+Selected for next development
+- Key transfer between phone and computer
+
+Backlog
+- Key transfer between phone and computer
+- File encryption 
+- File transfer between computers
+- Securely Receive files on computer
+- Scan QR code from device and save public key
